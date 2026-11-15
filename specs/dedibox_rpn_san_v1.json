@@ -1,0 +1,1397 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.dedibox.v1.RpnSanApi (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/dedibox/src/v1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "google.type.Money": {
+        "type": "object",
+        "properties": {
+          "currency_code": {
+            "type": "string"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nanos": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.CPU": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of CPU."
+          },
+          "core_count": {
+            "type": "number",
+            "description": "Number of cores of the CPU."
+          },
+          "thread_count": {
+            "type": "number",
+            "description": "Number of threads of the CPU."
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Frequency of the CPU."
+          },
+          "bench": {
+            "type": "number",
+            "description": "Bench of the CPU."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.Disk": {
+        "type": "object",
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "description": "Capacity of the disk."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.ServerDiskType",
+            "description": "Type of the disk."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.IP": {
+        "type": "object",
+        "properties": {
+          "ip_id": {
+            "type": "number",
+            "description": "ID of the IP."
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of the IP."
+          },
+          "reverse": {
+            "type": "string",
+            "description": "Reverse IP value."
+          },
+          "version": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.IPVersion",
+            "description": "Version of IP (v4 or v6)."
+          },
+          "cidr": {
+            "type": "number",
+            "description": "Classless InterDomain Routing notation of the IP."
+          },
+          "netmask": {
+            "type": "string",
+            "description": "Network mask of IP."
+          },
+          "semantic": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.IPSemantic",
+            "description": "Semantic of IP."
+          },
+          "gateway": {
+            "type": "string",
+            "description": "Gateway of IP."
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.IPStatus",
+            "description": "Status of the IP."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.IPSemantic": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "proxad",
+          "ext",
+          "public",
+          "private",
+          "ipmi",
+          "adm",
+          "redirect",
+          "migration"
+        ]
+      },
+      "scaleway.dedibox.v1.IPStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "ready",
+          "busy",
+          "locked"
+        ]
+      },
+      "scaleway.dedibox.v1.IPVersion": {
+        "type": "string",
+        "enum": [
+          "ipv4",
+          "ipv6"
+        ]
+      },
+      "scaleway.dedibox.v1.ListIpsResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number",
+            "description": "Total count of authorized IPs."
+          },
+          "ips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIp"
+            },
+            "description": "List of authorized IPs."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ListRpnSansRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc"
+        ]
+      },
+      "scaleway.dedibox.v1.ListRpnSansResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number",
+            "description": "Total count of matching RPN SANs."
+          },
+          "rpn_sans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanSummary"
+            },
+            "description": "List of RPN SANs that match filters."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.Memory": {
+        "type": "object",
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "description": "Capacity of the memory."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.MemoryType",
+            "description": "Type of the memory."
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Frequency of the memory."
+          },
+          "is_ecc": {
+            "type": "boolean",
+            "description": "True if the memory is an error-correcting code memory."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.MemoryType": {
+        "type": "string",
+        "enum": [
+          "ddr2",
+          "ddr3",
+          "ddr4",
+          "ddr5"
+        ]
+      },
+      "scaleway.dedibox.v1.Offer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the offer (aka product.id)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the offer."
+          },
+          "catalog": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferCatalog",
+            "description": "Catalog of the offer."
+          },
+          "payment_frequency": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferPaymentFrequency",
+            "description": "Payment frequency of the offer."
+          },
+          "pricing": {
+            "$ref": "#/components/schemas/google.type.Money",
+            "description": "Price of the offer."
+          },
+          "offer_id": {
+            "type": "number",
+            "description": "Original Dedibox ID of the offer."
+          },
+          "server_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServerInfo",
+            "description": "Server info if it is a server offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "service_level_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServiceLevelInfo",
+            "description": "Service level info if it is a service level offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "rpn_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferRPNInfo",
+            "description": "RPN info if it is a RPN offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "san_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferSANInfo",
+            "description": "SAN info if it is a SAN offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "antidos_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferAntiDosInfo",
+            "description": "AntiDOS info if it is a antiDOS offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "backup_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferBackupInfo",
+            "description": "Backup info if it is a backup offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "usb_storage_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferStorageInfo",
+            "description": "USB storage info if it is a USB storage offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "storage_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferStorageInfo",
+            "description": "Storage info if it is a storage offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "license_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferLicenseInfo",
+            "description": "License info if it is a license offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "failover_ip_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferFailoverIpInfo",
+            "description": "Failover IP info if it is a failover IP offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "failover_block_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferFailoverBlockInfo",
+            "description": "Failover block info if it is a failover block offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "bandwidth_info": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferBandwidthInfo",
+            "description": "Bandwidth info if it is a bandwidth offer.\nOne-of ('offerInfo'): at most one of 'serverInfo', 'serviceLevelInfo', 'rpnInfo', 'sanInfo', 'antidosInfo', 'backupInfo', 'usbStorageInfo', 'storageInfo', 'licenseInfo', 'failoverIpInfo', 'failoverBlockInfo', 'bandwidthInfo' could be set."
+          },
+          "commitments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferCommitment"
+            },
+            "description": "Commitment info if it is a commitment offer."
+          },
+          "available_os": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.OS"
+            },
+            "description": "Available OS info if it is a available OS offer."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferAntiDosInfo": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferAntiDosInfoType"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferAntiDosInfoType": {
+        "type": "string",
+        "enum": [
+          "minimal",
+          "preventive",
+          "curative"
+        ]
+      },
+      "scaleway.dedibox.v1.OfferBackupInfo": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferBandwidthInfo": {
+        "type": "object",
+        "properties": {
+          "speed": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferCatalog": {
+        "type": "string",
+        "enum": [
+          "all",
+          "default",
+          "beta",
+          "reseller",
+          "premium",
+          "volume",
+          "admin",
+          "inactive"
+        ]
+      },
+      "scaleway.dedibox.v1.OfferCommitment": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string",
+            "description": "Unit used for discount."
+          },
+          "value": {
+            "type": "number",
+            "description": "Value of the discount."
+          },
+          "free_setup_fees": {
+            "type": "boolean",
+            "description": "Is it free setup fees."
+          },
+          "duration": {
+            "type": "string",
+            "description": "Commitment's required duration."
+          },
+          "discounted_price": {
+            "$ref": "#/components/schemas/google.type.Money",
+            "description": "Discounted price of the commitment."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferFailoverBlockInfo": {
+        "type": "object",
+        "properties": {
+          "onetime_fees": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferFailoverIpInfo": {
+        "type": "object",
+        "properties": {
+          "onetime_fees": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferLicenseInfo": {
+        "type": "object",
+        "properties": {
+          "bound_to_ip": {
+            "type": "boolean"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferPaymentFrequency": {
+        "type": "string",
+        "enum": [
+          "monthly",
+          "oneshot"
+        ]
+      },
+      "scaleway.dedibox.v1.OfferRPNInfo": {
+        "type": "object",
+        "properties": {
+          "speed": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferSANInfo": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "number",
+            "description": "SAN size (in bytes)."
+          },
+          "ha": {
+            "type": "boolean",
+            "description": "High availability offer."
+          },
+          "device_type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferSANInfoType",
+            "description": "Type of SAN device (hdd / ssd)."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferSANInfoType": {
+        "type": "string",
+        "enum": [
+          "hdd",
+          "ssd"
+        ]
+      },
+      "scaleway.dedibox.v1.OfferServerInfo": {
+        "type": "object",
+        "properties": {
+          "bandwidth": {
+            "type": "number"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServerInfoStock"
+          },
+          "commercial_range": {
+            "type": "string"
+          },
+          "disks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.Disk"
+            }
+          },
+          "cpus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.CPU"
+            }
+          },
+          "memories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.Memory"
+            }
+          },
+          "persistent_memories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.PersistentMemory"
+            }
+          },
+          "raid_controllers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RaidController"
+            }
+          },
+          "available_options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+            }
+          },
+          "rpn_version": {
+            "type": "number"
+          },
+          "connectivity": {
+            "type": "number"
+          },
+          "onetime_fees": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+          },
+          "stock_by_datacenter": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServerInfoStock"
+            }
+          },
+          "availability_by_datacenter": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServerInfoAvailability"
+            }
+          },
+          "rpn_speed": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferServerInfoAvailability": {
+        "type": "object",
+        "properties": {
+          "stock": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OfferServerInfoStock"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferServerInfoStock": {
+        "type": "string",
+        "enum": [
+          "empty",
+          "low",
+          "available"
+        ]
+      },
+      "scaleway.dedibox.v1.OfferServiceLevelInfo": {
+        "type": "object",
+        "properties": {
+          "support_ticket": {
+            "type": "boolean"
+          },
+          "support_phone": {
+            "type": "boolean"
+          },
+          "sales_support": {
+            "type": "boolean"
+          },
+          "git": {
+            "type": "string"
+          },
+          "sla": {
+            "type": "number"
+          },
+          "priority_support": {
+            "type": "boolean"
+          },
+          "high_rpn_bandwidth": {
+            "type": "boolean"
+          },
+          "customization": {
+            "type": "boolean"
+          },
+          "antidos": {
+            "type": "boolean"
+          },
+          "extra_failover_quota": {
+            "type": "number"
+          },
+          "available_options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+            }
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OfferStorageInfo": {
+        "type": "object",
+        "properties": {
+          "max_quota": {
+            "type": "number"
+          },
+          "size": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OS": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the OS."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the OS."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OSType",
+            "description": "Type of the OS."
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the OS."
+          },
+          "arch": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.OSArch",
+            "description": "Architecture of the OS."
+          },
+          "allow_custom_partitioning": {
+            "type": "boolean",
+            "description": "True if the OS allow custom partitioning."
+          },
+          "allow_ssh_keys": {
+            "type": "boolean",
+            "description": "True if the OS allow SSH Keys."
+          },
+          "requires_user": {
+            "type": "boolean",
+            "description": "True if the OS requires user."
+          },
+          "requires_admin_password": {
+            "type": "boolean",
+            "description": "True if the OS requires admin password."
+          },
+          "requires_panel_password": {
+            "type": "boolean",
+            "description": "True if the OS requires panel password."
+          },
+          "allowed_filesystems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.PartitionFileSystem"
+            },
+            "description": "True if the OS allow file systems."
+          },
+          "requires_license": {
+            "type": "boolean",
+            "description": "True if the OS requires license."
+          },
+          "license_offers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+            },
+            "description": "License offers available with the OS."
+          },
+          "max_partitions": {
+            "type": "number",
+            "description": "Maximum number of partitions which can be created."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Display name of the OS."
+          },
+          "password_regex": {
+            "type": "string",
+            "description": "Regex used to validate the installation passwords."
+          },
+          "panel_password_regex": {
+            "type": "string",
+            "description": "Regex used to validate the panel installation password."
+          },
+          "requires_valid_hostname": {
+            "type": "boolean",
+            "description": "If both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid."
+          },
+          "hostname_regex": {
+            "type": "string",
+            "description": "If both requires_valid_hostname & hostname_regex are set, it means that at least one of the criteria must be valid."
+          },
+          "hostname_max_length": {
+            "type": "number",
+            "description": "Hostname max length."
+          },
+          "released_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "OS release date."
+          },
+          "beta": {
+            "type": "string",
+            "description": "Is it a beta OS."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the OS."
+          },
+          "official_website": {
+            "type": "string",
+            "description": "URL to OS official website."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.OSArch": {
+        "type": "string",
+        "enum": [
+          "unknown_arch",
+          "amd64",
+          "x86",
+          "arm",
+          "arm64"
+        ]
+      },
+      "scaleway.dedibox.v1.OSType": {
+        "type": "string",
+        "enum": [
+          "unknown_type",
+          "server",
+          "virtu",
+          "panel",
+          "desktop",
+          "custom",
+          "rescue"
+        ]
+      },
+      "scaleway.dedibox.v1.PartitionFileSystem": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "efi",
+          "swap",
+          "ext4",
+          "ext3",
+          "ext2",
+          "xfs",
+          "ntfs",
+          "fat32",
+          "ufs"
+        ]
+      },
+      "scaleway.dedibox.v1.PersistentMemory": {
+        "type": "object",
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "description": "Capacity of the persistent memory."
+          },
+          "frequency": {
+            "type": "number",
+            "description": "Frequency of the persistent memory."
+          },
+          "model": {
+            "type": "string",
+            "description": "Model of the persistent memory."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RaidController": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "Model of the RAID controller."
+          },
+          "raid_level": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "RAID level of the RAID controller."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnSan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "RPN SAN ID."
+          },
+          "datacenter_name": {
+            "type": "string",
+            "description": "Datacenter location."
+          },
+          "organization_id": {
+            "type": "string",
+            "description": "Organization ID."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Project ID."
+          },
+          "server_hostname": {
+            "type": "string",
+            "description": "RPN SAN server hostname."
+          },
+          "iqn_suffix": {
+            "type": "string",
+            "description": "IQN suffix."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date of creation of the RPN SAN."
+          },
+          "offer_id": {
+            "type": "number",
+            "description": "Offer ID."
+          },
+          "offer_name": {
+            "type": "string",
+            "description": "Offer description."
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanStatus",
+            "description": "Status."
+          },
+          "storage_size": {
+            "type": "number",
+            "description": "RPN SAN storage size."
+          },
+          "iqn": {
+            "type": "string"
+          },
+          "offer": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer"
+          },
+          "rpnv1_compatible": {
+            "type": "boolean",
+            "description": "True if the SAN is compatible with the RPNv1 technology."
+          },
+          "rpnv1_implicit": {
+            "type": "boolean",
+            "description": "True if the offer supports the RPNv1 implicitly, false if it must to be added to a group to support RPNv1."
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN delivery date."
+          },
+          "terminated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN termination date."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN expiration date."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnSanIp": {
+        "type": "object",
+        "properties": {
+          "server": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIpServer",
+            "description": "Basic server information behind the IP.\nOne-of ('rpnSanIp'): at most one of 'server', 'rpnv2Group' could be set."
+          },
+          "rpnv2_group": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIpRpnV2Group",
+            "description": "Basic RPNv2 group information behind the IP.\nOne-of ('rpnSanIp'): at most one of 'server', 'rpnv2Group' could be set."
+          },
+          "ip": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.IP",
+            "description": "An IP object."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIpType",
+            "description": "IP type (server | rpnv2_subnet)."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnSanIpRpnV2Group": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnSanIpServer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "datacenter_name": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnSanIpType": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "server_ip",
+          "rpnv2_subnet"
+        ]
+      },
+      "scaleway.dedibox.v1.RpnSanStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "creating",
+          "active",
+          "deleting",
+          "maintenance"
+        ]
+      },
+      "scaleway.dedibox.v1.RpnSanSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "RPN SAN ID."
+          },
+          "datacenter_name": {
+            "type": "string",
+            "description": "Datacenter location."
+          },
+          "organization_id": {
+            "type": "string",
+            "description": "Organization ID."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Project ID."
+          },
+          "server_hostname": {
+            "type": "string",
+            "description": "RPN SAN server hostname."
+          },
+          "iqn_suffix": {
+            "type": "string",
+            "description": "IQN suffix."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date of creation of the RPN SAN."
+          },
+          "offer_id": {
+            "type": "number",
+            "description": "Offer ID."
+          },
+          "offer_name": {
+            "type": "string",
+            "description": "Offer description."
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanStatus",
+            "description": "Status."
+          },
+          "storage_size": {
+            "type": "number",
+            "description": "RPN SAN storage size."
+          },
+          "rpnv1_compatible": {
+            "type": "boolean",
+            "description": "True if the SAN is compatible with the RPNv1 technology."
+          },
+          "rpnv1_implicit": {
+            "type": "boolean",
+            "description": "True if the offer supports the RPNv1 implicitly, false if it must to be added to a group to support RPNv1."
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN delivery date."
+          },
+          "terminated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN termination date."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RPN SAN expiration date."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ServerDiskType": {
+        "type": "string",
+        "enum": [
+          "sata",
+          "ssd",
+          "sas",
+          "sshd",
+          "usb",
+          "nvme"
+        ]
+      },
+      "scaleway.dedibox.v1.Service": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the service."
+          },
+          "resource_id": {
+            "type": "number",
+            "description": "Resource ID of the service."
+          },
+          "provisioning_status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.ServiceProvisioningStatus",
+            "description": "Provisioning status of the service."
+          },
+          "offer": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.Offer",
+            "description": "Offer of the service."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date of the service."
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Delivery date of the service."
+          },
+          "terminated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Terminatation date of the service."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration date of the service."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.ServiceType",
+            "description": "Service type, either order or service."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ServiceProvisioningStatus": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "delivering",
+          "ready",
+          "error",
+          "expiring",
+          "expired"
+        ]
+      },
+      "scaleway.dedibox.v1.ServiceType": {
+        "type": "string",
+        "enum": [
+          "unknown_type",
+          "service",
+          "order"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/dedibox/v1/rpn-sans": {
+      "get": {
+        "operationId": "ListRpnSans",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.listRpnSans`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Order of the RPN SANs.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRpnSansRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of RPN SANs per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Filter RPN SANs by project ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRpnSansResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateRpnSan",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.createRpnSan`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "offer_id": {
+                    "type": "number",
+                    "description": "Offer ID."
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "description": "Your project ID."
+                  }
+                },
+                "required": [
+                  "offer_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.Service"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/rpn-sans/{rpn_san_id}": {
+      "get": {
+        "operationId": "GetRpnSan",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.getRpnSan`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSan"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteRpnSan",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.deleteRpnSan`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/rpn-sans/{rpn_san_id}/ips": {
+      "get": {
+        "operationId": "ListIps",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.listIps`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Filter by IP type (server | rpnv2_subnet).",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIpType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListIpsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddIp",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.addIp`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ip_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "An array of IP ID."
+                  }
+                },
+                "required": [
+                  "ip_ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "RemoveIp",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.removeIp`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ip_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "An array of IP ID."
+                  }
+                },
+                "required": [
+                  "ip_ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/rpn-sans/{rpn_san_id}/available-ips": {
+      "get": {
+        "operationId": "ListAvailableIps",
+        "description": "Derived from scaleway-sdk-js (`RpnSanAPI.listAvailableIps`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rpn_san_id",
+            "required": true,
+            "description": "RPN SAN ID.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Filter by IP type (server | rpnv2_subnet).",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnSanIpType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListIpsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

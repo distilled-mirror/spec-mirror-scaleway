@@ -1,0 +1,670 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.billing.v2.Api (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/billing/src/v2 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v2"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "google.type.Money": {
+        "type": "object",
+        "properties": {
+          "currency_code": {
+            "type": "string"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nanos": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "scaleway.billing.v2.Budget": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Budget's ID."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The creation date of the budget."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The last modification date of the budget."
+          },
+          "organization_id": {
+            "type": "string",
+            "description": "The organization ID of the budget."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the budget is enabled or not."
+          },
+          "consumption_limit": {
+            "$ref": "#/components/schemas/google.type.Money",
+            "description": "Cost limit for this budget expressed in the embedded currency code."
+          },
+          "alerts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlert"
+            },
+            "description": "Alerts defined for this budget."
+          }
+        }
+      },
+      "scaleway.billing.v2.BudgetAlert": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Alert's ID."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The creation date of the alert."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The last modification date of the alert."
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Percentage threshold of the budget's limit for which the alert is triggered."
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlertNotification"
+            },
+            "description": "Notifications to send when the alert is triggered."
+          }
+        }
+      },
+      "scaleway.billing.v2.BudgetAlertNotification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Alert notification's ID."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The creation date of the alert notification."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The last modification date of the alert notification."
+          },
+          "type": {
+            "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlertNotificationType",
+            "description": "Kind of notification."
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of recipients for this alert."
+          }
+        }
+      },
+      "scaleway.billing.v2.BudgetAlertNotificationType": {
+        "type": "string",
+        "enum": [
+          "unknown_type",
+          "sms",
+          "email",
+          "webhook"
+        ]
+      },
+      "scaleway.billing.v2.ListBudgetsResponse": {
+        "type": "object",
+        "properties": {
+          "budgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.billing.v2.Budget"
+            },
+            "description": "Detailed budget list."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Total number of items."
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/billing/v2/budgets": {
+      "get": {
+        "operationId": "ListBudgets",
+        "summary": "List your budgets, filtering by `organization_id`",
+        "description": "Derived from scaleway-sdk-js (`API.listBudgets`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "Filter by organization ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Positive integer to select the number of items to return.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.ListBudgetsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateBudget",
+        "summary": "Create a new budget",
+        "description": "Derived from scaleway-sdk-js (`API.createBudget`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization_id": {
+                    "type": "string",
+                    "description": "The Organization ID of the budget."
+                  },
+                  "consumption_limit": {
+                    "type": "number",
+                    "description": "Cost limit for the budget expressed in the invoiced currency (no cents allowed)."
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether the budget is enabled or not."
+                  }
+                },
+                "required": [
+                  "consumption_limit",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.Budget"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/budgets/{budget_id}": {
+      "get": {
+        "operationId": "GetBudget",
+        "summary": "Fetch a budget",
+        "description": "Derived from scaleway-sdk-js (`API.getBudget`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_id",
+            "required": true,
+            "description": "The ID of the budget.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.Budget"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateBudget",
+        "summary": "Update a budget",
+        "description": "Derived from scaleway-sdk-js (`API.updateBudget`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_id",
+            "required": true,
+            "description": "The ID of the budget to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consumption_limit": {
+                    "type": "number",
+                    "description": "Cost limit for the budget expressed in the invoiced currency (no cents allowed)."
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Whether the budget will be enabled or not."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.Budget"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBudget",
+        "summary": "Delete a budget",
+        "description": "Derived from scaleway-sdk-js (`API.deleteBudget`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_id",
+            "required": true,
+            "description": "The ID of the budget to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/budget-alerts": {
+      "post": {
+        "operationId": "CreateBudgetAlert",
+        "summary": "Create a new budget alert",
+        "description": "Derived from scaleway-sdk-js (`API.createBudgetAlert`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "budget_id": {
+                    "type": "string",
+                    "description": "The ID of the budget to create alert for."
+                  },
+                  "threshold": {
+                    "type": "number",
+                    "description": "Threshold above which the alert is sent."
+                  }
+                },
+                "required": [
+                  "budget_id",
+                  "threshold"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlert"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/budget-alerts/{budget_alert_id}": {
+      "patch": {
+        "operationId": "UpdateBudgetAlert",
+        "summary": "Update a budget alert",
+        "description": "Derived from scaleway-sdk-js (`API.updateBudgetAlert`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_alert_id",
+            "required": true,
+            "description": "The ID of the budget alert to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "threshold": {
+                    "type": "number",
+                    "description": "Threshold above which the alert is sent."
+                  }
+                },
+                "required": [
+                  "threshold"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlert"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBudgetAlert",
+        "summary": "Delete a budget alert",
+        "description": "Derived from scaleway-sdk-js (`API.deleteBudgetAlert`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_alert_id",
+            "required": true,
+            "description": "The ID of the budget alert to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/budget-alert-notifications": {
+      "post": {
+        "operationId": "CreateBudgetAlertNotification",
+        "summary": "Create a new budget alert notification",
+        "description": "Derived from scaleway-sdk-js (`API.createBudgetAlertNotification`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "budget_alert_id": {
+                    "type": "string",
+                    "description": "The ID of the budget alert to create notification for."
+                  },
+                  "sms_phone_numbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of phone numbers to receive sms notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  },
+                  "email_addresses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of email addresses to receive email notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  },
+                  "webhook_urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of webhook url to receive webhook notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  }
+                },
+                "required": [
+                  "budget_alert_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlertNotification"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/budget-alert-notifications/{budget_alert_notification_id}": {
+      "patch": {
+        "operationId": "UpdateBudgetAlertNotification",
+        "summary": "Update a budget alert notification",
+        "description": "Derived from scaleway-sdk-js (`API.updateBudgetAlertNotification`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_alert_notification_id",
+            "required": true,
+            "description": "The ID of the budget alert notification to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sms_phone_numbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of phone numbers to receive sms notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  },
+                  "email_addresses": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of email addresses to receive email notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  },
+                  "webhook_urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of webhook url to receive webhook notifications.\nOne-of ('recipientType'): at most one of 'smsPhoneNumbers', 'emailAddresses', 'webhookUrls' could be set."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.BudgetAlertNotification"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteBudgetAlertNotification",
+        "summary": "Delete a budget alert notification",
+        "description": "Derived from scaleway-sdk-js (`API.deleteBudgetAlertNotification`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "budget_alert_notification_id",
+            "required": true,
+            "description": "The ID of the budget alert notification to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

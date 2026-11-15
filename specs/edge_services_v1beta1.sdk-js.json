@@ -1,0 +1,334 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.edge_services.v1beta1.Api (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/edge_services/src/v1beta1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1beta1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "scaleway.edge_services.v1beta1.ListVPCEndpointsRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc",
+          "name_asc",
+          "name_desc"
+        ]
+      },
+      "scaleway.edge_services.v1beta1.ListVPCEndpointsResponse": {
+        "type": "object",
+        "properties": {
+          "vpc_endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.VPCEndpoint"
+            },
+            "description": "Paginated list of VPC Endpoints."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Count of all VPC Endpoints matching the requested criteria."
+          }
+        }
+      },
+      "scaleway.edge_services.v1beta1.SetPipelineVPCEndpointsResponse": {
+        "type": "object",
+        "properties": {
+          "pipeline_id": {
+            "type": "string",
+            "description": "Pipeline ID."
+          },
+          "vpc_endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.VPCEndpoint"
+            },
+            "description": "List of VPC Endpoints for the given Pipeline ID."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Count of all VPC Endpoints for the given Pipeline ID."
+          }
+        }
+      },
+      "scaleway.edge_services.v1beta1.VPCEndpoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The VPC Endpoint ID."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Project ID of the VPC Endpoint."
+          },
+          "region": {
+            "type": "string",
+            "description": "Zone of the VPC Endpoint."
+          },
+          "private_network_id": {
+            "type": "string",
+            "description": "Private Network ID of the VPC Endpoint."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the VPC Endpoint was created."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the VPC Endpoint was last updated."
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/edge-services/v1beta1/vpc-endpoints/{vpc_endpoint_id}": {
+      "get": {
+        "operationId": "GetVPCEndpoint",
+        "summary": "Get VPC Endpoint. Retrieve information about an existing VPC Endpoint, specified by its `vpc_endpoint_id`.",
+        "description": "Derived from scaleway-sdk-js (`API.getVPCEndpoint`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vpc_endpoint_id",
+            "required": true,
+            "description": "The VPC Endpoint ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.VPCEndpoint"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteVPCEndpoint",
+        "summary": "Delete VPC Endpoint. Delete an existing VPC Endpoint, specified by its `vpc_endpoint_id`.",
+        "description": "Derived from scaleway-sdk-js (`API.deleteVPCEndpoint`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vpc_endpoint_id",
+            "required": true,
+            "description": "The VPC Endpoint ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/edge-services/v1beta1/vpc-endpoints": {
+      "get": {
+        "operationId": "ListVPCEndpoints",
+        "summary": "List VPC Endpoints. List all VPC Endpoints, for a Scaleway Organization or Scaleway Project. By default, the VPC Endpoints returned in the list are ordered by creation date in ascending order, though this can be modified via the `order_by` field.",
+        "description": "Derived from scaleway-sdk-js (`API.listVPCEndpoints`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Sort order of VPC Endpoints in the response.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.ListVPCEndpointsRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "Organization ID to filter for. Only VPC Endpoints from this Organization will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to return, from the paginated results.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of VPC Endpoints to return per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Project ID to filter for. Only VPC Endpoints from this project will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.ListVPCEndpointsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateVPCEndpoint",
+        "summary": "Create VPC Endpoint. Create a new VPC Endpoint. You must specify a `private_network_id` to define to which Private Network the VPC endpoint will be attached to.",
+        "description": "Derived from scaleway-sdk-js (`API.createVPCEndpoint`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": "string",
+                    "description": "Project ID of the VPC Endpoint."
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "Zone of the VPC Endpoint."
+                  },
+                  "private_network_id": {
+                    "type": "string",
+                    "description": "Private Network ID of the VPC Endpoint."
+                  }
+                },
+                "required": [
+                  "private_network_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.VPCEndpoint"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/edge-services/v1beta1/pipelines/{pipeline_id}/vpc-endpoints": {
+      "put": {
+        "operationId": "SetPipelineVPCEndpoints",
+        "summary": "Attach VPC Endpoints. Attach VPC Endpoint to the given Pipeline. You must specify a `pipeline_id` and `vpc_endpoint_ids` which contains the list of VPC Endpoints.",
+        "description": "Derived from scaleway-sdk-js (`API.setPipelineVPCEndpoints`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pipeline_id",
+            "required": true,
+            "description": "Pipeline ID for which VPC Endpoints must be set.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vpc_endpoint_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of VPC Endpoints to attach."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.edge_services.v1beta1.SetPipelineVPCEndpointsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

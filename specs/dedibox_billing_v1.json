@@ -1,0 +1,562 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.dedibox.v1.BillingApi (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/dedibox/src/v1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "google.type.Money": {
+        "type": "object",
+        "properties": {
+          "currency_code": {
+            "type": "string"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nanos": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.CanOrderResponse": {
+        "type": "object",
+        "properties": {
+          "can_order": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "quota_ok": {
+            "type": "boolean"
+          },
+          "phone_confirmed": {
+            "type": "boolean"
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "user_confirmed": {
+            "type": "boolean"
+          },
+          "payment_mode": {
+            "type": "boolean"
+          },
+          "billing_ok": {
+            "type": "boolean"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.Invoice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "total_with_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "total_without_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.InvoiceStatus"
+          },
+          "payment_method": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.InvoicePaymentMethod"
+          },
+          "content": {
+            "type": "string"
+          },
+          "transaction_id": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.InvoicePaymentMethod": {
+        "type": "string",
+        "enum": [
+          "unknown_payment_method",
+          "credit_card",
+          "amex",
+          "paypal",
+          "transfer",
+          "direct_debit"
+        ]
+      },
+      "scaleway.dedibox.v1.InvoiceStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_invoice_status",
+          "unpaid",
+          "paid",
+          "errored"
+        ]
+      },
+      "scaleway.dedibox.v1.InvoiceSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "total_with_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "total_without_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.InvoiceStatus"
+          },
+          "payment_method": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.InvoicePaymentMethod"
+          },
+          "transaction_id": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ListInvoicesRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc"
+        ]
+      },
+      "scaleway.dedibox.v1.ListInvoicesResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number"
+          },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.InvoiceSummary"
+            }
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ListRefundsRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc"
+        ]
+      },
+      "scaleway.dedibox.v1.ListRefundsResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number"
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RefundSummary"
+            }
+          }
+        }
+      },
+      "scaleway.dedibox.v1.Refund": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "total_with_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "total_without_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refunded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RefundStatus"
+          },
+          "method": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RefundMethod"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RefundMethod": {
+        "type": "string",
+        "enum": [
+          "unknown_refund_method",
+          "credit_card",
+          "amex",
+          "paypal",
+          "transfer"
+        ]
+      },
+      "scaleway.dedibox.v1.RefundStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_refund_status",
+          "unpaid",
+          "paid",
+          "errored"
+        ]
+      },
+      "scaleway.dedibox.v1.RefundSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "total_with_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "total_without_taxes": {
+            "$ref": "#/components/schemas/google.type.Money"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refunded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RefundStatus"
+          },
+          "method": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.RefundMethod"
+          }
+        }
+      },
+      "scaleway.std.File": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dedibox/v1/invoices": {
+      "get": {
+        "operationId": "ListInvoices",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.listInvoices`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.ListInvoicesRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListInvoicesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/invoices/{invoice_id}": {
+      "get": {
+        "operationId": "GetInvoice",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.getInvoice`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "invoice_id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.Invoice"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/invoices/{invoice_id}/download": {
+      "get": {
+        "operationId": "DownloadInvoice",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.downloadInvoice`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "invoice_id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.std.File"
+                }
+              }
+            }
+          }
+        },
+        "x-distilled-raw-download": true,
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/refunds": {
+      "get": {
+        "operationId": "ListRefunds",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.listRefunds`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRefundsRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRefundsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/refunds/{refund_id}": {
+      "get": {
+        "operationId": "GetRefund",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.getRefund`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "refund_id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.Refund"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/refunds/{refund_id}/download": {
+      "get": {
+        "operationId": "DownloadRefund",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.downloadRefund`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "refund_id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.std.File"
+                }
+              }
+            }
+          }
+        },
+        "x-distilled-raw-download": true,
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/can-order": {
+      "get": {
+        "operationId": "CanOrder",
+        "description": "Derived from scaleway-sdk-js (`BillingAPI.canOrder`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.CanOrderResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,1359 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Annotations API",
+    "description": "Scaleway Annotations lets you attach custom key-value metadata to any cloud resource (instance, bucket, database, etc.). Use Annotations to start organizing your Scaleway resources now, setting up your infrastructure for our next-generation FinOps, GreenOps, and governance tools.\n\nThis product is currently in Beta.\n\n## Concepts\n\n### Annotation\n\nAn annotation is custom metadata you can attach to any Scaleway resource (instance, bucket, database, etc.). It consists of a key (the category of information for a resource) and a value (the concrete information associated with a category).\n\n### Key-Value\n\nAn annotation key is a globally-unique identifier that names the piece of metadata you want to attach to a resource. The key defines the category of information for a resource (e.g., team, environment, cost-center).\n\nAn annotation value is the concrete information (e.g., marketing, production, 83546) associated with a category, i.e., an annotation key. A value cannot exist on its own, it must always be a child of a key.\n\nFor example:\n\n| Key         | Value                      |\n| ----------- | -------------------------- |\n| team        | marketing, finance, sales  |\n| environment | staging, production        |\n| cost_center | c83546, c32424, c47847     |\n\nA key-value pair constitutes an annotation.\n\n### Binding\n\nA binding is the explicit association that links an annotation to a specific resource. In other words, a binding records which resource the annotation applies to.\n\n### Scaleway Resource Name\n\nA Scaleway Resource Name (SRN) is a Uniform Resource Identifier (URI) that uniquely identifies a Scaleway resource.\n\nIn the context of Annotations, you are required to provide the SRN of the resource when binding a key-value pair to it via the Annotations API.\n\nAn SRN usually follows this format:\n\n```text\nsrn://product-slug.partition/locality-type/{locality}/resource-type/{resource-id}\n```\n\nExamples:\n\n```text\n# Key Manager key - an example with locality\nsrn://key-manager.scw.eu/regions/fr-par/keys/25f6c309-a2c6-4fb2-8d16-57960c3fb9df\n\n# IAM application - an example with no locality\nsrn://iam.scw.eu/applications/25f6c309-a2c6-4fb2-8d16-57960c3fb9df\n```\n\nFor detailed information about how SRNs are composed, see [Scaleway Resource Names](https://www.scaleway.com/en/developers/api#scaleway-resource-names).\n\n## Quickstart\n\n<Message type=\"requirement\">\n - You have your [Organization ID](https://console.scaleway.com/project/settings)\n - You have created an [API key](https://www.scaleway.com/en/docs/iam/how-to/create-api-keys/) and the API key has sufficient [IAM permissions](https://www.scaleway.com/en/docs/iam/reference-content/permission-sets/) to perform the actions described on this page. To start using Annotations, configure one of the following permission sets:\n   - `AnnotationsFullAccess`: Full access to annotations (keys, values, and bindings).\n   - `AnnotationsReadOnly`: Read-only access to annotations. Typical users are auditors or finance team members (e.g., a FinOps analyst who can view and filter by annotation but cannot modify anything).\n   - `AnnotationsBindingManager`: Allows attaching annotations to resources, but prohibits modifying the annotation dictionary. Typical users are developers (including Terraform) who need the dictionary for autocomplete and must be able to create/delete bindings, but must not add or modify keys/values.\n - You have [installed `curl`](https://curl.se/download.html)\n</Message>\n\nIn the following steps, you are going to create a key-value pair (example: `service`, `payment`), bind it to a given resource, then list your organization's bindings.\n\n1. Configure your environment variables.\n\n   <Message type=\"note\">\n   This is an optional step to simplify your usage of the Annotations API.\n   </Message>\n\n    ```bash\n    export SCW_ACCESS_KEY=\"<access-key>\"\n    export SCW_SECRET_KEY=\"<secret-key>\"\n    export SCW_ORGANIZATION_ID=\"<your-organization-id>\"\n    ```\n\n2. Run the following command to create an annotation key. Remember to replace the placeholders with actual values.\n\n    ```bash\n    curl -X POST \\\n    -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n    -H \"Content-Type: application/json\" \\\n    -d \"{\\\"description\\\":\\\"<description-of-key>\\\",\\\"name\\\":\\\"<name-of-key>\\\",\\\"organization_id\\\":\\\"$SCW_ORGANIZATION_ID\\\"}\" \\\n    \"https://api.scaleway.com/annotations/v1/keys\"\n    ```\n\n   Example response:\n\n    ```json\n    {\n        \"id\":\"019eac9e-18a7-7bcb-b448-978c36d0a2fc\",\n        \"srn\":\"srn://annotations.scw.eu/keys/019eac9e-18a7-7bcb-b448-978c36d0a2fc\",\n        \"name\":\"service\",\n        \"description\":\"key-for-services\"\n    }\n    ```\n\n   Note the key `id` returned in the response, you will need it in the next step.\n\n3. Run the following command to add a value to the key. Remember to replace the placeholders with actual values.\n\n    ```bash\n    curl -X POST \\\n    -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n    -H \"Content-Type: application/json\" \\\n    -d \"{\\\"description\\\":\\\"<description-of-value>\\\",\\\"key_id\\\":\\\"<id-of-key>\\\",\\\"name\\\":\\\"<name-of-value>\\\"}\" \\\n    \"https://api.scaleway.com/annotations/v1/values\"\n    ```\n\n   Example response:\n\n    ```json\n    {\n        \"id\":\"019eb0ba-6400-748c-a037-b6b436c0ec41\",\n        \"srn\":\"srn://annotations.scw.eu/values/019eb0ba-6400-748c-a037-b6b436c0ec41\",\n        \"key_id\":\"019eac9e-18a7-7bcb-b448-978c36d0a2fc\",\n        \"name\":\"payments\",\n        \"description\":\"value-for-payments\"\n    }\n    ```\n\n   Note the value `id` returned in the response, you will need it in the next step.\n\n4. Attach a key-value pair to a selected cloud resource. Remember to replace the placeholders with actual values.\n\n    ```bash\n    curl -X POST \\\n    -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n    -H \"Content-Type: application/json\" \\\n    -d '{\"target_srn\":\"<srn-value>\",\"value_id\":\"<id-of-value>\"}' \\\n    \"https://api.scaleway.com/annotations/v1/bindings\"\n    ```\n\n   Example response:\n\n    ```json\n    {\n        \"id\":\"019eb0cb-7527-76e6-bc56-63d4d92e319e\",\n        \"srn\":\"srn://annotations.scw.eu/bindings/019eb0cb-7527-76e6-bc56-63d4d92e319e\",\n        \"target_srn\":\"srn://k8s.scw.eu/regions/fr-par/clusters/25f6c309-a2c6-4fb2-8d16-57960c3fb9df\",\n        \"key\":{\n            \"id\":\"019eac9e-18a7-7bcb-b448-978c36d0a2fc\",\n            \"name\":\"service\"\n        },\n        \"value\":{\n            \"id\":\"019eb0ba-6400-748c-a037-b6b436c0ec41\",\n            \"name\":\"payments\"\n        }\n    }\n    ```\n\n5. Run the following command to list bindings (i.e., the annotations attached to your resources). Remember to replace the placeholder with an actual value.\n\n    ```bash\n    curl -X GET \\\n    -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n    \"https://api.scaleway.com/annotations/v1/bindings?organization_id=$SCW_ORGANIZATION_ID\"\n    ```\n\n   Example response:\n\n    ```json\n    {\n        \"bindings\":[\n            {\n                \"id\":\"019eb0cb-7527-76e6-bc56-63d4d92e319e\",\n                \"srn\":\"srn://annotations.scw.eu/bindings/019eb0cb-7527-76e6-bc56-63d4d92e319e\",\n                \"target_srn\":\"srn://k8s.scw.eu/regions/fr-par/clusters/25f6c309-a2c6-4fb2-8d16-57960c3fb9df\",\n                \"key\":{\n                    \"id\":\"019eac9e-18a7-7bcb-b448-978c36d0a2fc\",\n                    \"name\":\"service\"\n                },\n                \"value\":{\n                    \"id\":\"019eb0ba-6400-748c-a037-b6b436c0ec41\",\n                    \"name\":\"payments\"\n                }\n            }\n        ],\n        \"total_count\":1\n    }\n    ```\n\n## Technical information\n\n### Regions\n\nScaleway's infrastructure spans different [regions and Availability Zones](https://www.scaleway.com/en/docs/account/reference-content/products-availability/).\n\nAnnotations is a global product that is available in all regions.\n\n## Technical limitations\n\n### Validation rules\n\n| Element       | Maximum length  | Allowed values         |\n| ------------- | --------------- | ---------------------- |\n| key `name`    | 128 characters  | `^[_\\\\pL][_\\\\pL0-9]*$` |\n| value `name`  | 256 characters  | `^[_\\\\pL][_\\\\pL0-9]*$` |\n| `description` | 1024 characters | No restrictions        |\n\nAll list endpoints return items sorted alphabetically by name (except bindings, which are sorted by ID).\n\n### Integrity rules\n\n- Strict binding: A resource can only have one value per key.\n- No orphans:\n  - You cannot delete a key if it has values.\n  - You cannot delete a value if it has bindings.\n\n### Consumption limits\n\n| Element                           | Limit  |\n| --------------------------------- | ------ |\n| Number of keys per organization   | 100    |\n| Number of values per key          | 200    |\n| Number of values per organization | 5,000  |\n| Number of bindings per resource   | 50     |.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Keys",
+      "description": "Manage keys."
+    },
+    {
+      "name": "Values",
+      "description": "Manage values."
+    },
+    {
+      "name": "Keys and values",
+      "description": "Manage keys and values."
+    },
+    {
+      "name": "Bindings",
+      "description": "Manage bindings."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "scaleway.annotations.v1.Binding": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the binding. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the binding.",
+            "pattern": "^srn://annotations\\.[^/]+/bindings/[^/]+$"
+          },
+          "target_srn": {
+            "type": "string",
+            "description": "SRN of the resource the binding is attached to."
+          },
+          "key": {
+            "description": "Key associated to the binding.",
+            "$ref": "#/components/schemas/scaleway.annotations.v1.Binding.Key"
+          },
+          "value": {
+            "description": "Value associated to the binding.",
+            "$ref": "#/components/schemas/scaleway.annotations.v1.Binding.Value"
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "target_srn",
+          "key",
+          "value"
+        ]
+      },
+      "scaleway.annotations.v1.Binding.Key": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the key. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the key.",
+            "pattern": "^srn://annotations\\.[^/]+/keys/[^/]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the key."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "name"
+        ]
+      },
+      "scaleway.annotations.v1.Binding.Value": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the value. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the value.",
+            "pattern": "^srn://annotations\\.[^/]+/values/[^/]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the value."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "name"
+        ]
+      },
+      "scaleway.annotations.v1.DeleteAllBindingsMatchingSRNResponse": {
+        "type": "object",
+        "properties": {
+          "total_deleted": {
+            "type": "integer",
+            "description": "Total number of bindings deleted.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "total_deleted"
+        ]
+      },
+      "scaleway.annotations.v1.DeleteAllBindingsMatchingValueResponse": {
+        "type": "object",
+        "properties": {
+          "total_deleted": {
+            "type": "integer",
+            "description": "Total number of bindings deleted.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "total_deleted"
+        ]
+      },
+      "scaleway.annotations.v1.DeleteAllValuesMatchingKeyResponse": {
+        "type": "object",
+        "properties": {
+          "total_deleted": {
+            "type": "integer",
+            "description": "Total number of values deleted.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "total_deleted"
+        ]
+      },
+      "scaleway.annotations.v1.Key": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the annotation key. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the annotation key.",
+            "pattern": "^srn://annotations\\.[^/]+/keys/[^/]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the annotation key."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the annotation key."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "name",
+          "description"
+        ]
+      },
+      "scaleway.annotations.v1.ListAllKeysAndValuesResponse": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "description": "List of keys with values for an organization, sorted alphabetically by name.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.annotations.v1.ListAllKeysAndValuesResponse.Key"
+            }
+          }
+        },
+        "x-properties-order": [
+          "keys"
+        ]
+      },
+      "scaleway.annotations.v1.ListAllKeysAndValuesResponse.Key": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the key. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the key.",
+            "pattern": "^srn://annotations\\.[^/]+/keys/[^/]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the key."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the key."
+          },
+          "values": {
+            "type": "array",
+            "description": "List of values associated with the key, sorted alphabetically by name.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.annotations.v1.ListAllKeysAndValuesResponse.Value"
+            }
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "name",
+          "description",
+          "values"
+        ]
+      },
+      "scaleway.annotations.v1.ListAllKeysAndValuesResponse.Value": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the value. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the value.",
+            "pattern": "^srn://annotations\\.[^/]+/values/[^/]+$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the value."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the value."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "name",
+          "description"
+        ]
+      },
+      "scaleway.annotations.v1.ListBindingsResponse": {
+        "type": "object",
+        "properties": {
+          "bindings": {
+            "type": "array",
+            "description": "List of bindings for the organization. Response order by ID.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.annotations.v1.Binding"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of bindings returned.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "bindings",
+          "total_count"
+        ]
+      },
+      "scaleway.annotations.v1.ListKeysResponse": {
+        "type": "object",
+        "properties": {
+          "keys": {
+            "type": "array",
+            "description": "List of keys for an organization, sorted alphabetically by name.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.annotations.v1.Key"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of keys returned.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "keys",
+          "total_count"
+        ]
+      },
+      "scaleway.annotations.v1.ListValuesResponse": {
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "description": "List of values for a key, sorted alphabetically by name.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.annotations.v1.Value"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of values returned.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "values",
+          "total_count"
+        ]
+      },
+      "scaleway.annotations.v1.Value": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of the value. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the annotation value.",
+            "pattern": "^srn://annotations\\.[^/]+/values/[^/]+$"
+          },
+          "key_id": {
+            "type": "string",
+            "description": "ID of the key the value is associated to. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the value (e.g. \"production\" for a key \"environment\")."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the value."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "srn",
+          "key_id",
+          "name",
+          "description"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    }
+  },
+  "paths": {
+    "/annotations/v1/all-keys-and-values": {
+      "get": {
+        "tags": [
+          "Keys and values"
+        ],
+        "operationId": "ListAllKeysAndValues",
+        "summary": "List all keys and values for an organization, sorted alphabetically by key name and value name.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "ID of the organization. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.ListAllKeysAndValuesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/all-keys-and-values?organization_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/all-keys-and-values\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  organization_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/bindings": {
+      "get": {
+        "tags": [
+          "Bindings"
+        ],
+        "operationId": "ListBindings",
+        "summary": "List all bindings, or filter by Scaleway Resource Name or value ID. Response order by ID.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Maximum number of bindings on the page.",
+            "schema": {
+              "type": "integer",
+              "format": "uint32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "ID of the organization. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target_srn",
+            "description": "SRN of the resource for which to list all bindings.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "value_id",
+            "description": "Value ID for which to list all bindings. (UUID format)",
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.ListBindingsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/bindings?organization_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/bindings\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  organization_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Bindings"
+        ],
+        "operationId": "CreateBinding",
+        "summary": "Attach a value to a resource. Fails if the resource already has a value for this key.",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Binding"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target_srn": {
+                    "type": "string",
+                    "description": "SRN of the resource to attach the value to."
+                  },
+                  "value_id": {
+                    "type": "string",
+                    "description": "ID of the value to associate. (UUID format)",
+                    "example": "6170692e-7363-616c-6577-61792e636f6d"
+                  }
+                },
+                "x-properties-order": [
+                  "target_srn",
+                  "value_id"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"target_srn\":\"string\",\"value_id\":\"6170692e-7363-616c-6577-61792e636f6d\"}' \\\n  \"https://api.scaleway.com/annotations/v1/bindings\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/annotations/v1/bindings\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  target_srn=\"string\" \\\n  value_id=\"6170692e-7363-616c-6577-61792e636f6d\""
+          }
+        ]
+      }
+    },
+    "/annotations/v1/bindings/{binding_id}": {
+      "delete": {
+        "tags": [
+          "Bindings"
+        ],
+        "operationId": "DeleteBinding",
+        "summary": "Detach an annotation from a resource.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "binding_id",
+            "description": "ID of the binding to delete. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/bindings/{binding_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/bindings/{binding_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/bindings/delete-all-matching-srn": {
+      "delete": {
+        "tags": [
+          "Bindings"
+        ],
+        "operationId": "DeleteAllBindingsMatchingSRN",
+        "summary": "Delete ALL bindings associated with a Scaleway Resource Name.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "target_srn",
+            "description": "SRN of the resource for which all bindings should be deleted.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "ID of the organization. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.DeleteAllBindingsMatchingSRNResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "deprecated": true,
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/bindings/delete-all-matching-srn?organization_id=6170692e-7363-616c-6577-61792e636f6d&target_srn=string\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/bindings/delete-all-matching-srn\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  organization_id==6170692e-7363-616c-6577-61792e636f6d \\\n  target_srn==string"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/bindings/delete-all-matching-value": {
+      "delete": {
+        "tags": [
+          "Bindings"
+        ],
+        "operationId": "DeleteAllBindingsMatchingValue",
+        "summary": "Delete ALL bindings associated with a value.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "value_id",
+            "description": "ID of the value for which all bindings should be deleted. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.DeleteAllBindingsMatchingValueResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "deprecated": true,
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/bindings/delete-all-matching-value?value_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/bindings/delete-all-matching-value\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  value_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/keys": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "operationId": "ListKeys",
+        "summary": "List all keys, sorted alphabetically by name.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Maximum number of keys on the page.",
+            "schema": {
+              "type": "integer",
+              "format": "uint32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "ID of the organization. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.ListKeysResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/keys?organization_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/keys\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  organization_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Keys"
+        ],
+        "operationId": "CreateKey",
+        "summary": "Create an annotation key.",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Key"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization_id": {
+                    "type": "string",
+                    "description": "ID of the organization. (UUID format)",
+                    "example": "6170692e-7363-616c-6577-61792e636f6d"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the annotation key. Never use a secret as a name, as it is shown in the audit trail.",
+                    "pattern": "^[_\\pL][_\\pL0-9]*$"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the annotation key. Never put a secret in the description, as it is shown in the audit trail."
+                  }
+                },
+                "x-properties-order": [
+                  "organization_id",
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"description\": \"string\",\n    \"name\": \"string\",\n    \"organization_id\": \"6170692e-7363-616c-6577-61792e636f6d\"\n  }' \\\n  \"https://api.scaleway.com/annotations/v1/keys\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/annotations/v1/keys\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  description=\"string\" \\\n  name=\"string\" \\\n  organization_id=\"6170692e-7363-616c-6577-61792e636f6d\""
+          }
+        ]
+      }
+    },
+    "/annotations/v1/keys/{key_id}": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "operationId": "GetKey",
+        "summary": "Retrieve a specific key.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "description": "ID of the key to retrieve. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Key"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/keys/{key_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/keys/{key_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Keys"
+        ],
+        "operationId": "UpdateKey",
+        "summary": "Update name or description. All associated resources will immediately display the new name.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "description": "ID of the key to update. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Key"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "New name of the key. Never use a secret as a name, as it is shown in the audit trail.",
+                    "pattern": "^[_\\pL][_\\pL0-9]*$"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "New description of the key. Never put a secret in the description, as it is shown in the audit trail."
+                  }
+                },
+                "x-properties-order": [
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X PATCH \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/annotations/v1/keys/{key_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http PATCH \"https://api.scaleway.com/annotations/v1/keys/{key_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Keys"
+        ],
+        "operationId": "DeleteKey",
+        "summary": "Delete a key definition. Fails if the key has any associated values.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key_id",
+            "description": "ID of the key to delete. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/keys/{key_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/keys/{key_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/values": {
+      "get": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ListValues",
+        "summary": "List all values, sorted alphabetically by name.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Maximum number of values on the page.",
+            "schema": {
+              "type": "integer",
+              "format": "uint32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "ID of the organization. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          },
+          {
+            "in": "query",
+            "name": "key_id",
+            "description": "ID of the key to list the values for. (UUID format)",
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.ListValuesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/values?organization_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/values\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  organization_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "CreateValue",
+        "summary": "Add a value definition to a key.",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Value"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key_id": {
+                    "type": "string",
+                    "description": "ID of the key the value will be bound to. (UUID format)",
+                    "example": "6170692e-7363-616c-6577-61792e636f6d"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the value. Never use a secret as a name, as it is shown in the audit trail.",
+                    "pattern": "^[_\\pL][_\\pL0-9]*$"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the value. Never put a secret in the description, as it is shown in the audit trail."
+                  }
+                },
+                "x-properties-order": [
+                  "key_id",
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"description\": \"string\",\n    \"key_id\": \"6170692e-7363-616c-6577-61792e636f6d\",\n    \"name\": \"string\"\n  }' \\\n  \"https://api.scaleway.com/annotations/v1/values\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/annotations/v1/values\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  description=\"string\" \\\n  key_id=\"6170692e-7363-616c-6577-61792e636f6d\" \\\n  name=\"string\""
+          }
+        ]
+      }
+    },
+    "/annotations/v1/values/{value_id}": {
+      "get": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "GetValue",
+        "summary": "Retrieve a specific value.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "value_id",
+            "description": "ID of the value to retrieve. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Value"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/values/{value_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/annotations/v1/values/{value_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "UpdateValue",
+        "summary": "Update name or description.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "value_id",
+            "description": "ID of the value to update. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.Value"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "New name of the value. Never use a secret as a name, as it is shown in the audit trail.",
+                    "pattern": "^[_\\pL][_\\pL0-9]*$"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "New description of the value. Never put a secret in the description, as it is shown in the audit trail."
+                  }
+                },
+                "x-properties-order": [
+                  "name",
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X PATCH \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/annotations/v1/values/{value_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http PATCH \"https://api.scaleway.com/annotations/v1/values/{value_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "DeleteValue",
+        "summary": "Delete a value definition. Fails if the value is currently bound to any resource.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "value_id",
+            "description": "ID of the value to delete. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/values/{value_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/values/{value_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/annotations/v1/values/delete-all-matching-key": {
+      "delete": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "DeleteAllValuesMatchingKey",
+        "summary": "Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "key_id",
+            "description": "ID of the key for which to delete all values. (UUID format)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.annotations.v1.DeleteAllValuesMatchingKeyResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "deprecated": true,
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/annotations/v1/values/delete-all-matching-key?key_id=6170692e-7363-616c-6577-61792e636f6d\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/annotations/v1/values/delete-all-matching-key\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  key_id==6170692e-7363-616c-6577-61792e636f6d"
+          }
+        ]
+      }
+    }
+  }
+}

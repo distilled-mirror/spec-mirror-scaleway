@@ -1,0 +1,334 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.billing.v2.ElectronicBillingApi (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/billing/src/v2 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v2"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "scaleway.billing.v2.ElectronicAddress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the electronic address."
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The start date of the electronic address."
+          },
+          "stops_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The stop date of the electronic address."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The creation date of the electronic address."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The last modification date of the electronic address."
+          },
+          "organization_id": {
+            "type": "string",
+            "description": "The organization ID of the electronic address."
+          },
+          "value": {
+            "type": "string",
+            "description": "Current value of electronic address."
+          }
+        }
+      },
+      "scaleway.billing.v2.ListElectronicAddressesRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "starts_at_asc",
+          "starts_at_desc"
+        ]
+      },
+      "scaleway.billing.v2.ListElectronicAddressesResponse": {
+        "type": "object",
+        "properties": {
+          "electronic_addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.billing.v2.ElectronicAddress"
+            },
+            "description": "List of electronic addresses."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Total Number of returned electronic addresses."
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/billing/v2/electronic-address": {
+      "get": {
+        "operationId": "ListElectronicAddresses",
+        "summary": "List electronic addresses",
+        "description": "Derived from scaleway-sdk-js (`ElectronicBillingAPI.listElectronicAddresses`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Sort order of Electronic address in the response.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.billing.v2.ListElectronicAddressesRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "The Organization ID to set electronic address.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to return, from the paginated results.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of Electronic Address to return per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starts_after",
+            "description": "Filter services where electronic address start_date is greater or equal to starts_after.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "stops_before",
+            "description": "Filter services where electronic address stop_date is before stops_before.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.ListElectronicAddressesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateElectronicAddress",
+        "summary": "Create a new electronic address",
+        "description": "Derived from scaleway-sdk-js (`ElectronicBillingAPI.createElectronicAddress`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization_id": {
+                    "type": "string",
+                    "description": "The Organization ID to set electronic address."
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "Electronic address to set."
+                  },
+                  "starts_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When electronic address should be active."
+                  },
+                  "stops_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When electronic address should stop being active."
+                  }
+                },
+                "required": [
+                  "value"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.ElectronicAddress"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/billing/v2/electronic-address/{electronic_address_id}": {
+      "get": {
+        "operationId": "GetElectronicAddress",
+        "summary": "Fetch an electronic address",
+        "description": "Derived from scaleway-sdk-js (`ElectronicBillingAPI.getElectronicAddress`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "electronic_address_id",
+            "required": true,
+            "description": "The ID of the electronic address we want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.ElectronicAddress"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateElectronicAddress",
+        "summary": "Update an electronic address",
+        "description": "Derived from scaleway-sdk-js (`ElectronicBillingAPI.updateElectronicAddress`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "electronic_address_id",
+            "required": true,
+            "description": "The ID of the electronic address we want to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "description": "Electronic address to set."
+                  },
+                  "stops_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "When electronic address should stop being active."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.billing.v2.ElectronicAddress"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteElectronicAddress",
+        "summary": "Delete an electronic address",
+        "description": "Derived from scaleway-sdk-js (`ElectronicBillingAPI.deleteElectronicAddress`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "electronic_address_id",
+            "required": true,
+            "description": "The ID of the electronic address to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

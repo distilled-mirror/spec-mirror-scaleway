@@ -1,0 +1,1477 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.dataviz.v1alpha1.Api (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/dataviz/src/v1alpha1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1alpha1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "scaleway.dataviz.v1alpha1.Certificate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "deployment_id": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region to target. If none is passed will use default region from the config."
+          },
+          "srn": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.Deployment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the deployment."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the deployment."
+          },
+          "organization_id": {
+            "type": "string",
+            "description": "ID of the Organization containing the deployment."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "ID of the Project containing the deployment."
+          },
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.DeploymentStatus",
+            "description": "Status of the deployment."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags of the deployment."
+          },
+          "node_count": {
+            "type": "number",
+            "description": "Number of nodes."
+          },
+          "node_type": {
+            "type": "string",
+            "description": "Node type used."
+          },
+          "volume": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Volume",
+            "description": "Volume type and size."
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Endpoint"
+            },
+            "description": "Exposed endpoints."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the deployment was created."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the deployment was last updated."
+          },
+          "version": {
+            "type": "string",
+            "description": "DataViz version of the deployment."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the deployment."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the deployment."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.DeploymentStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "ready",
+          "creating",
+          "initializing",
+          "upgrading",
+          "deleting",
+          "error",
+          "locked",
+          "locking",
+          "unlocking"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.Endpoint": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the endpoint."
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointService"
+            },
+            "description": "List of available services, their ports and URLs."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the endpoint."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the endpoint."
+          },
+          "public": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointPublicDetails",
+            "description": "One-of ('details'): at most one of 'public', 'privateNetwork' could be set."
+          },
+          "private_network": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointPrivateNetworkDetails",
+            "description": "One-of ('details'): at most one of 'public', 'privateNetwork' could be set."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.EndpointPrivateNetworkDetails": {
+        "type": "object",
+        "properties": {
+          "private_network_id": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.EndpointPublicDetails": {
+        "type": "object",
+        "properties": {}
+      },
+      "scaleway.dataviz.v1alpha1.EndpointService": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "port": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.EndpointSpec": {
+        "type": "object",
+        "properties": {
+          "public": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointSpecPublicDetails",
+            "description": "One-of ('details'): at most one of 'public', 'privateNetwork' could be set."
+          },
+          "private_network": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointSpecPrivateNetworkDetails",
+            "description": "One-of ('details'): at most one of 'public', 'privateNetwork' could be set."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.EndpointSpecPrivateNetworkDetails": {
+        "type": "object",
+        "properties": {
+          "private_network_id": {
+            "type": "string"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.EndpointSpecPublicDetails": {
+        "type": "object",
+        "properties": {}
+      },
+      "scaleway.dataviz.v1alpha1.ListDeploymentsRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc",
+          "name_asc",
+          "name_desc",
+          "updated_at_asc",
+          "updated_at_desc"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.ListDeploymentsResponse": {
+        "type": "object",
+        "properties": {
+          "deployments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+            },
+            "description": "List of deployments."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Number of deployments in result set."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.ListNodeTypesRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "name_asc",
+          "name_desc",
+          "vcpus_asc",
+          "vcpus_desc",
+          "memory_asc",
+          "memory_desc"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.ListNodeTypesResponse": {
+        "type": "object",
+        "properties": {
+          "node_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.NodeType"
+            },
+            "description": "List of node types compatible."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Number of node types in result set."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.ListUsersRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "name_asc",
+          "name_desc"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.ListUsersResponse": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.User"
+            }
+          },
+          "total_count": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.ListVersionsRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "version_asc",
+          "version_desc"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.ListVersionsResponse": {
+        "type": "object",
+        "properties": {
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Version"
+            },
+            "description": "List of versions."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Number of versions in result set."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.NodeType": {
+        "type": "object",
+        "properties": {
+          "stock_status": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.NodeTypeStockStatus",
+            "description": "Stock status for the node type."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the node type."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the node type."
+          },
+          "vcpus": {
+            "type": "number",
+            "description": "Number of vCPUs available."
+          },
+          "memory_bytes": {
+            "type": "number",
+            "description": "Amount of memory available."
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Defines whether the node type is disabled."
+          },
+          "beta": {
+            "type": "boolean",
+            "description": "Defines whether the node type is in beta."
+          },
+          "instance_range": {
+            "type": "string",
+            "description": "Instance range associated with the node type offer."
+          },
+          "available_volume_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.NodeTypeVolumeType"
+            },
+            "description": "Available storage options for the node type."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the node type."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the node type."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.NodeTypeStockStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_stock",
+          "low_stock",
+          "out_of_stock",
+          "available"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.NodeTypeVolumeType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.VolumeType"
+          },
+          "description": {
+            "type": "string"
+          },
+          "min_size_bytes": {
+            "type": "number"
+          },
+          "max_size_bytes": {
+            "type": "number"
+          },
+          "chunk_size_bytes": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.User": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the deployment user."
+          },
+          "deployment_id": {
+            "type": "string",
+            "description": "ID of the deployment."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the user."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the user."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.Version": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "DataViz version."
+          },
+          "end_of_life": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date the version support ends."
+          },
+          "disabled": {
+            "type": "boolean",
+            "description": "Defines whether the version is disabled."
+          },
+          "beta": {
+            "type": "boolean",
+            "description": "Defines whether the version is in beta."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the version."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the version."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.Volume": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.VolumeType",
+            "description": "Type of the Volume."
+          },
+          "size_bytes": {
+            "type": "number",
+            "description": "Size of the Volume."
+          }
+        }
+      },
+      "scaleway.dataviz.v1alpha1.VolumeType": {
+        "type": "string",
+        "enum": [
+          "unknown_type",
+          "sbs_5k",
+          "sbs_15k"
+        ]
+      },
+      "scaleway.std.File": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dataviz/v1alpha1/regions/{region}/deployments": {
+      "post": {
+        "operationId": "CreateDeployment",
+        "summary": "Create a new DataViz deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.createDeployment`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": "string",
+                    "description": "Project ID in which to create the deployment."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the deployment."
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Tags."
+                  },
+                  "node_count": {
+                    "type": "number",
+                    "description": "Number of nodes."
+                  },
+                  "node_type": {
+                    "type": "string",
+                    "description": "Node type to use."
+                  },
+                  "user_name": {
+                    "type": "string",
+                    "description": "Username for the deployment user."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password for the deployment user."
+                  },
+                  "volume": {
+                    "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Volume",
+                    "description": "Volume for storing data."
+                  },
+                  "endpoints": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointSpec"
+                    },
+                    "description": "Endpoints to access the deployment."
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "The DataViz version to use."
+                  }
+                },
+                "required": [
+                  "name",
+                  "node_count",
+                  "node_type",
+                  "version"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ListDeployments",
+        "summary": "Retrieve a list of DataViz deployments.",
+        "description": "Derived from scaleway-sdk-js (`API.listDeployments`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Deployment name to filter for, only deployments with this string within their name will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Sort order for deployments in the response.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListDeploymentsRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "Organization ID to filter for, only deployments from this Organization will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to return, from the paginated results.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of deployments to return per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Project ID to filter for, only deployments from this Project will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "description": "Tags to filter for, only deployments with one or more matching tags will be returned.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListDeploymentsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}": {
+      "patch": {
+        "operationId": "UpdateDeployment",
+        "summary": "Update a DataViz deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.updateDeployment`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "New name for the deployment."
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Tags to update."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "GetDeployment",
+        "summary": "Retrieve a specific DataViz deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.getDeployment`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteDeployment",
+        "summary": "Delete a DataViz deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.deleteDeployment`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/upgrade": {
+      "post": {
+        "operationId": "UpgradeDeployment",
+        "summary": "Upgrade a DataViz deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.upgradeDeployment`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "node_count": {
+                    "type": "number",
+                    "description": "Target number of nodes.\nOne-of ('upgradeTarget'): at most one of 'nodeCount', 'volumeSizeBytes' could be set."
+                  },
+                  "volume_size_bytes": {
+                    "type": "number",
+                    "description": "Target volume size.\nOne-of ('upgradeTarget'): at most one of 'nodeCount', 'volumeSizeBytes' could be set."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Deployment"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/versions": {
+      "get": {
+        "operationId": "ListVersions",
+        "summary": "List available DataViz versions.",
+        "description": "Derived from scaleway-sdk-js (`API.listVersions`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Sort order for versions in the response.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListVersionsRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to return, from the paginated results.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of versions to return per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "description": "Engine version to filter for, only versions with this version will be returned.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListVersionsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/node-types": {
+      "get": {
+        "operationId": "ListNodeTypes",
+        "summary": "Retrieve a list of available node types.",
+        "description": "Derived from scaleway-sdk-js (`API.listNodeTypes`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Sort order for versions in the response.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListNodeTypesRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number to return, from the paginated results.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of node types to return per page.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListNodeTypesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/endpoints": {
+      "post": {
+        "operationId": "CreateEndpoint",
+        "summary": "Create a new endpoint for a deployment.",
+        "description": "Derived from scaleway-sdk-js (`API.createEndpoint`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "deployment_id": {
+                    "type": "string",
+                    "description": "ID of the deployment."
+                  },
+                  "endpoint_spec": {
+                    "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.EndpointSpec",
+                    "description": "Specification of the endpoint you want to create."
+                  }
+                },
+                "required": [
+                  "deployment_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Endpoint"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/endpoints/{endpoint_id}": {
+      "delete": {
+        "operationId": "DeleteEndpoint",
+        "summary": "Delete an existing endpoint.",
+        "description": "Derived from scaleway-sdk-js (`API.deleteEndpoint`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "endpoint_id",
+            "required": true,
+            "description": "ID of the endpoint.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/users": {
+      "get": {
+        "operationId": "ListUsers",
+        "summary": "Retrieve a list of deployment users.",
+        "description": "Derived from scaleway-sdk-js (`API.listUsers`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListUsersRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListUsersResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateUser",
+        "summary": "Create a new user.",
+        "description": "Derived from scaleway-sdk-js (`API.createUser`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username of the deployment user."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password of the deployment user."
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/users/{username}": {
+      "patch": {
+        "operationId": "UpdateUser",
+        "summary": "Update an existing user.",
+        "description": "Derived from scaleway-sdk-js (`API.updateUser`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "description": "Username of the deployment user.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "description": "Password of the deployment user."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.User"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteUser",
+        "summary": "Delete an existing user.",
+        "description": "Derived from scaleway-sdk-js (`API.deleteUser`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "description": "ID of the deployment.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "description": "Username of the deployment user.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/certificate-authority": {
+      "get": {
+        "operationId": "DownloadDeploymentCertificateAuthority",
+        "description": "Derived from scaleway-sdk-js (`API.downloadDeploymentCertificateAuthority`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.std.File"
+                }
+              }
+            }
+          }
+        },
+        "x-distilled-raw-download": true,
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/certificates": {
+      "post": {
+        "operationId": "CreateCertificate",
+        "description": "Derived from scaleway-sdk-js (`API.createCertificate`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Certificate"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

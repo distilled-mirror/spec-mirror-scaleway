@@ -1,0 +1,225 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.dedibox.v1.RpnApi (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/dedibox/src/v1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "scaleway.dedibox.v1.GetRpnStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.GetRpnStatusResponseStatus",
+            "description": "If status = 'operational', you can perform rpn actions in write."
+          },
+          "operations_left": {
+            "type": "number",
+            "description": "Number of operations left to perform before being operational."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.GetRpnStatusResponseStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "busy",
+          "operational"
+        ]
+      },
+      "scaleway.dedibox.v1.ListRpnServerCapabilitiesRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc"
+        ]
+      },
+      "scaleway.dedibox.v1.ListRpnServerCapabilitiesResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number",
+            "description": "Total count of servers."
+          },
+          "servers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.RpnServerCapability"
+            },
+            "description": "List of servers and their RPN capabilities."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.RpnServerCapability": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Server ID."
+          },
+          "hostname": {
+            "type": "string",
+            "description": "Server hostname."
+          },
+          "datacenter_name": {
+            "type": "string",
+            "description": "Server datacenter name."
+          },
+          "zone": {
+            "type": "string",
+            "description": "Server zone."
+          },
+          "ip_address": {
+            "type": "string",
+            "description": "Private IP address (if rpn compatiblle)."
+          },
+          "rpn_version": {
+            "type": "number",
+            "description": "Supported rpn version."
+          },
+          "compatible_qinq": {
+            "type": "boolean",
+            "description": "True if server is compatible with QinQ protocol (rpn v2)."
+          },
+          "can_join_qinq_group": {
+            "type": "boolean",
+            "description": "True if server can join a QinQ group."
+          },
+          "rpnv1_group_count": {
+            "type": "number",
+            "description": "Times server is linked in a rpnv1 group."
+          },
+          "rpnv2_group_count": {
+            "type": "number",
+            "description": "Times server is linked in a rpnv2 group."
+          },
+          "can_join_rpnv2_group": {
+            "type": "boolean",
+            "description": "True if server can join an rpnv2 group."
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dedibox/v1/rpn/server-capabilities": {
+      "get": {
+        "operationId": "ListRpnServerCapabilities",
+        "description": "Derived from scaleway-sdk-js (`RpnAPI.listRpnServerCapabilities`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "order_by",
+            "description": "Order of the servers.",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRpnServerCapabilitiesRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "description": "Number of servers per page.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Filter servers by project ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListRpnServerCapabilitiesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/rpn/status": {
+      "get": {
+        "operationId": "GetRpnStatus",
+        "description": "Derived from scaleway-sdk-js (`RpnAPI.getRpnStatus`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "A project ID.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rpnv1_group_id",
+            "description": "An RPN v1 group ID.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rpnv2_group_id",
+            "description": "An RPN v2 group ID.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.GetRpnStatusResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

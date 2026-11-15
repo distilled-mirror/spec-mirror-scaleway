@@ -1,0 +1,455 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "scaleway.dedibox.v1.IPv6BlockApi (derived)",
+    "description": "Derived from scaleway/scaleway-sdk-js packages_generated/dedibox/src/v1 — the portal publishes no OpenAPI document for these routes.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    },
+    "schemas": {
+      "scaleway.dedibox.v1.GetIPv6BlockQuotasResponse": {
+        "type": "object",
+        "properties": {
+          "quotas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.GetIPv6BlockQuotasResponseQuota"
+            },
+            "description": "Quota for each CIDR of IPv6 block."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Total count of quotas."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.GetIPv6BlockQuotasResponseQuota": {
+        "type": "object",
+        "properties": {
+          "quota": {
+            "type": "number"
+          },
+          "cidr": {
+            "type": "number"
+          }
+        }
+      },
+      "scaleway.dedibox.v1.IPv6Block": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "ID of the IPv6."
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of the IPv6."
+          },
+          "duid": {
+            "type": "string",
+            "description": "DUID of the IPv6."
+          },
+          "nameservers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "DNS linked to the IPv6."
+          },
+          "cidr": {
+            "type": "number",
+            "description": "Classless InterDomain Routing notation of the IPv6."
+          },
+          "subnets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+            },
+            "description": "All IPv6 subnets."
+          },
+          "delegation_status": {
+            "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6BlockDelegationStatus",
+            "description": "The nameservers delegation status."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.IPv6BlockDelegationStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "updating",
+          "done"
+        ]
+      },
+      "scaleway.dedibox.v1.ListIPv6BlocksResponse": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "type": "number"
+          },
+          "ipv6_blocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+            }
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ListIPv6BlockSubnetsAvailableResponse": {
+        "type": "object",
+        "properties": {
+          "subnet_availables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dedibox.v1.ListIPv6BlockSubnetsAvailableResponseSubnet"
+            },
+            "description": "All available address and CIDR available in subnet."
+          },
+          "total_count": {
+            "type": "number",
+            "description": "Total count of available subnets."
+          }
+        }
+      },
+      "scaleway.dedibox.v1.ListIPv6BlockSubnetsAvailableResponseSubnet": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "cidr": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dedibox/v1/ipv6-block-quotas": {
+      "get": {
+        "operationId": "GetIPv6BlockQuotas",
+        "summary": "Get IPv6 block quota. Get IPv6 block quota with the given project ID.",
+        "description": "/48 one per organization.\n\n/56 link to your number of server.\n\n/64 link to your number of failover IP.\n\nDerived from scaleway-sdk-js (`IPv6BlockAPI.getIPv6BlockQuotas`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.GetIPv6BlockQuotasResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/ipv6-block": {
+      "post": {
+        "operationId": "CreateIPv6Block",
+        "summary": "Create IPv6 block for baremetal server. Create IPv6 block associated with the given project ID.",
+        "description": "Derived from scaleway-sdk-js (`IPv6BlockAPI.createIPv6Block`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": "string",
+                    "description": "ID of the project."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "GetIPv6Block",
+        "summary": "Get first IPv6 block. Get the first IPv6 block associated with the given project ID.",
+        "description": "Derived from scaleway-sdk-js (`IPv6BlockAPI.getIPv6Block`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/ipv6-blocks": {
+      "get": {
+        "operationId": "ListIPv6Blocks",
+        "summary": "List IPv6 blocks. List IPv6 blocks associated given project ID.",
+        "description": "Derived from scaleway-sdk-js (`IPv6BlockAPI.listIPv6Blocks`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListIPv6BlocksResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/ipv6-blocks/{block_id}": {
+      "patch": {
+        "operationId": "UpdateIPv6Block",
+        "summary": "Update IPv6 block. Update DNS associated to IPv6 block.",
+        "description": "If DNS is used, minimum of 2 is necessary and maximum of 5 (no duplicate).\n\nDerived from scaleway-sdk-js (`IPv6BlockAPI.updateIPv6Block`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "block_id",
+            "required": true,
+            "description": "ID of the IPv6 block.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nameservers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "DNS to link to the IPv6."
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteIPv6Block",
+        "summary": "Delete IPv6 block. Delete IPv6 block subnet with the given ID.",
+        "description": "Derived from scaleway-sdk-js (`IPv6BlockAPI.deleteIPv6Block`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "block_id",
+            "required": true,
+            "description": "ID of the IPv6 block to delete.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dedibox/v1/ipv6-blocks/{block_id}/subnets": {
+      "post": {
+        "operationId": "CreateIPv6BlockSubnet",
+        "summary": "Create IPv6 block subnet. Create IPv6 block subnet for the given IP ID.",
+        "description": "/48 could create subnet in /56 (quota link to your number of server).\n\n/56 could create subnet in /64 (quota link to your number of failover IP).\n\nDerived from scaleway-sdk-js (`IPv6BlockAPI.createIPv6BlockSubnet`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "block_id",
+            "required": true,
+            "description": "ID of the IPv6 block.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Address of the IPv6."
+                  },
+                  "cidr": {
+                    "type": "number",
+                    "description": "Classless InterDomain Routing notation of the IPv6."
+                  }
+                },
+                "required": [
+                  "address",
+                  "cidr"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.IPv6Block"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ListIPv6BlockSubnetsAvailable",
+        "summary": "List available IPv6 block subnets. List all available IPv6 block subnets for given IP ID.",
+        "description": "Derived from scaleway-sdk-js (`IPv6BlockAPI.listIPv6BlockSubnetsAvailable`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "block_id",
+            "required": true,
+            "description": "ID of the IPv6 block.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dedibox.v1.ListIPv6BlockSubnetsAvailableResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    }
+  }
+}

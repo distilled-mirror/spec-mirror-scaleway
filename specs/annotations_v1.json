@@ -54,6 +54,24 @@
           "value": {
             "description": "Value associated to the binding.",
             "$ref": "#/components/schemas/scaleway.annotations.v1.Binding.Value"
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of creation of the binding. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of the last update of the binding. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
           }
         },
         "x-properties-order": [
@@ -61,7 +79,9 @@
           "srn",
           "target_srn",
           "key",
-          "value"
+          "value",
+          "created_at",
+          "updated_at"
         ]
       },
       "scaleway.annotations.v1.Binding.Key": {
@@ -171,13 +191,33 @@
           "description": {
             "type": "string",
             "description": "Description of the annotation key."
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of creation of the annotation key. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of the last update of the annotation key. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
           }
         },
         "x-properties-order": [
           "id",
           "srn",
           "name",
-          "description"
+          "description",
+          "created_at",
+          "updated_at"
         ]
       },
       "scaleway.annotations.v1.ListAllKeysAndValuesResponse": {
@@ -349,6 +389,24 @@
           "description": {
             "type": "string",
             "description": "Description of the value."
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of creation of the value. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp of the last update of the value. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
           }
         },
         "x-properties-order": [
@@ -356,7 +414,9 @@
           "srn",
           "key_id",
           "name",
-          "description"
+          "description",
+          "created_at",
+          "updated_at"
         ]
       }
     },

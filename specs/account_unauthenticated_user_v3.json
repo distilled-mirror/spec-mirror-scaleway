@@ -1291,11 +1291,6 @@
                     "description": "Identity provider to connect with.",
                     "$ref": "#/components/schemas/scaleway.account.v3.OIDCIdentityProvider"
                   },
-                  "account_type": {
-                    "description": "Type of account to create.",
-                    "deprecated": true,
-                    "$ref": "#/components/schemas/scaleway.account.v3.Account.Type"
-                  },
                   "redirect_url": {
                     "type": "string",
                     "description": "URL to redirect the user to after login."
@@ -1307,7 +1302,6 @@
                 },
                 "x-properties-order": [
                   "identity_provider",
-                  "account_type",
                   "redirect_url",
                   "account_redirect_uri"
                 ]
@@ -2208,11 +2202,6 @@
                     "description": "Identity provider to connect with.",
                     "$ref": "#/components/schemas/scaleway.account.v3.OIDCIdentityProvider"
                   },
-                  "account_type": {
-                    "description": "Type of account to create.",
-                    "deprecated": true,
-                    "$ref": "#/components/schemas/scaleway.account.v3.Account.Type"
-                  },
                   "code": {
                     "type": "string",
                     "description": "Authorization code returned initially by the identity provider."
@@ -2224,7 +2213,6 @@
                 },
                 "x-properties-order": [
                   "identity_provider",
-                  "account_type",
                   "code",
                   "account_redirect_uri"
                 ]

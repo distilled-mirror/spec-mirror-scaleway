@@ -165,6 +165,14 @@
             "description": "For the `tiered` storage policy, controls when data is moved from the hot volume (Block Storage) to the cold volume (Object Storage). Data is moved once free space on the hot volume drops below this fraction of its capacity. Value between 0 and 1 (default 0.1, i.e. data is moved when the hot volume is 90% full).",
             "format": "double"
           },
+          "kms_key_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ID of the Key Manager key encrypting the deployment data at rest. Empty if the deployment is not encrypted. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
           "region": {
             "type": "string",
             "description": "Region of the deployment."
@@ -192,6 +200,7 @@
           "endpoints",
           "ram_per_cpu",
           "move_factor",
+          "kms_key_id",
           "region",
           "srn"
         ]
@@ -889,6 +898,14 @@
                     ],
                     "description": "For the `tiered` storage policy, controls when data is moved from the hot volume (Block Storage) to the cold volume (Object Storage). Data is moved once free space on the hot volume drops below this fraction of its capacity. Value between 0 and 1 (default 0.1, i.e. data is moved when the hot volume is 90% full).",
                     "format": "double"
+                  },
+                  "kms_key_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ID of a Key Manager key of the Project, used to encrypt the deployment data at rest. The key must be enabled, with a symmetric encryption usage. Encryption can only be chosen at creation, it cannot be enabled, disabled or changed afterwards. (UUID format)",
+                    "example": "6170692e-7363-616c-6577-61792e636f6d"
                   }
                 },
                 "x-properties-order": [
@@ -903,7 +920,8 @@
                   "cpu_max",
                   "endpoints",
                   "ram_per_cpu",
-                  "move_factor"
+                  "move_factor",
+                  "kms_key_id"
                 ]
               }
             }

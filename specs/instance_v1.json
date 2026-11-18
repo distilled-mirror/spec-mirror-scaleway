@@ -1912,6 +1912,7 @@
           "hourly_price": {
             "type": "number",
             "description": "Hourly price in Euro.",
+            "deprecated": true,
             "format": "float"
           },
           "alt_names": {

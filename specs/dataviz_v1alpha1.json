@@ -218,6 +218,29 @@
         "type": "object",
         "properties": {}
       },
+      "scaleway.dataviz.v1alpha1.ListCertificatesRequestOrderBy": {
+        "type": "string",
+        "enum": [
+          "name_asc",
+          "name_desc",
+          "created_at_asc",
+          "created_at_desc"
+        ]
+      },
+      "scaleway.dataviz.v1alpha1.ListCertificatesResponse": {
+        "type": "object",
+        "properties": {
+          "certificates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Certificate"
+            }
+          },
+          "total_count": {
+            "type": "number"
+          }
+        }
+      },
       "scaleway.dataviz.v1alpha1.ListDeploymentsRequestOrderBy": {
         "type": "string",
         "enum": [
@@ -1454,6 +1477,124 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.Certificate"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ListCertificates",
+        "description": "Derived from scaleway-sdk-js (`API.listCertificates`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListCertificatesRequestOrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.dataviz.v1alpha1.ListCertificatesResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
+      }
+    },
+    "/dataviz/v1alpha1/regions/{region}/deployments/{deployment_id}/certificates/{certificate_id}": {
+      "get": {
+        "operationId": "GetCertificate",
+        "description": "Derived from scaleway-sdk-js (`API.getCertificate`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",

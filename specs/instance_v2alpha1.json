@@ -1016,16 +1016,6 @@
             "description": "Number of templates.",
             "format": "uint32"
           },
-          "flexible_ips": {
-            "type": "integer",
-            "description": "Number of flexible IPs.",
-            "format": "uint32"
-          },
-          "unused_flexible_ips": {
-            "type": "integer",
-            "description": "Number of flexible IPs not attached to any server.",
-            "format": "uint32"
-          },
           "images": {
             "type": "integer",
             "description": "Number of images.",
@@ -1045,8 +1035,6 @@
           "volumes_scratch",
           "private_network_interfaces",
           "templates",
-          "flexible_ips",
-          "unused_flexible_ips",
           "images"
         ]
       },

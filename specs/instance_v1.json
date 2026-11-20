@@ -332,15 +332,7 @@
             "type": "integer",
             "format": "uint32"
           },
-          "ips_count": {
-            "type": "integer",
-            "format": "uint32"
-          },
           "security_groups_count": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "ips_unused": {
             "type": "integer",
             "format": "uint32"
           },
@@ -384,9 +376,7 @@
           "images_count",
           "snapshots_count",
           "servers_count",
-          "ips_count",
           "security_groups_count",
-          "ips_unused",
           "volumes_l_ssd_count",
           "volumes_l_ssd_total_size",
           "private_nics_count",

@@ -68,6 +68,11 @@
             "description": "Project ID. (UUID format)",
             "example": "6170692e-7363-616c-6577-61792e636f6d"
           },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the consumption limits.",
+            "pattern": "^srn://generative-apis\\.[^/]+/projects/[^/]+/models/[^/]+/consumption-limit$"
+          },
           "limits": {
             "type": "array",
             "description": "Model limit objects.",
@@ -80,6 +85,7 @@
           "model_id",
           "organization_id",
           "project_id",
+          "srn",
           "limits"
         ]
       },

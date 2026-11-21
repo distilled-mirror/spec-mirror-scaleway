@@ -372,7 +372,8 @@
           "passkey_uv_not_verified",
           "expired_session",
           "authentication_code_required",
-          "mfa_required"
+          "mfa_required",
+          "invalid_magic_link"
         ],
         "x-enum-descriptions": {
           "values": {
@@ -386,7 +387,8 @@
             "passkey_uv_not_verified": "Passkey user verification not verified",
             "expired_session": "Login session expired",
             "authentication_code_required": "Password was correct but an authentication code is required",
-            "mfa_required": "Password was correct but a second factor (OTP or WebAuthn) is required"
+            "mfa_required": "Password was correct but a second factor (OTP or WebAuthn) is required",
+            "invalid_magic_link": "Invalid, expired or already used magic link"
           }
         },
         "default": "unknown_failure_reason"
@@ -415,7 +417,8 @@
           "authentication_code",
           "oauth2",
           "saml",
-          "passkey"
+          "passkey",
+          "magic_link"
         ],
         "x-enum-descriptions": {
           "values": {
@@ -424,7 +427,8 @@
             "authentication_code": "Authentication code",
             "oauth2": "OAuth 2.0 / OpenID Connect",
             "saml": "SAML-based authentication",
-            "passkey": "WebAuthn passkey authentication"
+            "passkey": "WebAuthn passkey authentication",
+            "magic_link": "Passwordless magic link sent by email"
           }
         },
         "default": "unknown_method"

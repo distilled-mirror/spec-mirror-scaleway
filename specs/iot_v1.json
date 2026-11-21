@@ -187,6 +187,11 @@
             "type": "string",
             "description": "Device ID, also used as MQTT Client ID or username."
           },
+          "srn": {
+            "type": "string",
+            "description": "Device SRN.",
+            "pattern": "^srn://iot-hub\\.[^/]+/regions/[^/]+/devices/[^/]+$"
+          },
           "name": {
             "type": "string",
             "description": "Device name."
@@ -257,6 +262,7 @@
         },
         "x-properties-order": [
           "id",
+          "srn",
           "name",
           "description",
           "status",
@@ -393,6 +399,11 @@
             "type": "string",
             "description": "Hub ID."
           },
+          "srn": {
+            "type": "string",
+            "description": "Hub SRN.",
+            "pattern": "^srn://iot-hub\\.[^/]+/regions/[^/]+/hubs/[^/]+$"
+          },
           "name": {
             "type": "string",
             "description": "Hub name."
@@ -484,6 +495,7 @@
         },
         "x-properties-order": [
           "id",
+          "srn",
           "name",
           "status",
           "product_plan",
@@ -714,6 +726,11 @@
             "type": "string",
             "description": "Network ID."
           },
+          "srn": {
+            "type": "string",
+            "description": "Network SRN.",
+            "pattern": "^srn://iot-hub\\.[^/]+/regions/[^/]+/networks/[^/]+$"
+          },
           "name": {
             "type": "string",
             "description": "Network name."
@@ -750,6 +767,7 @@
         },
         "x-properties-order": [
           "id",
+          "srn",
           "name",
           "type",
           "endpoint",
@@ -862,6 +880,11 @@
             "format": "date-time",
             "example": "2022-03-22T12:34:56.123456Z"
           },
+          "srn": {
+            "type": "string",
+            "description": "Route SRN.",
+            "pattern": "^srn://iot-hub\\.[^/]+/regions/[^/]+/routes/[^/]+$"
+          },
           "region": {
             "type": "string",
             "description": "Region of the route."
@@ -878,6 +901,7 @@
           "db_config",
           "rest_config",
           "updated_at",
+          "srn",
           "region"
         ]
       },

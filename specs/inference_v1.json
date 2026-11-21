@@ -130,11 +130,7 @@
           "srn": {
             "type": "string",
             "description": "SRN of the deployment.",
-            "pattern": "^srn://inference\\.[^/]+/zones/[^/]+/deployment/[^/]+$"
-          },
-          "zone": {
-            "type": "string",
-            "description": "Zone of the deployment."
+            "pattern": "^srn://inference\\.[^/]+/regions/[^/]+/deployments/[^/]+$"
           }
         },
         "x-properties-order": [
@@ -155,8 +151,7 @@
           "created_at",
           "updated_at",
           "region",
-          "srn",
-          "zone"
+          "srn"
         ]
       },
       "scaleway.inference.v1.Deployment.Status": {
@@ -475,11 +470,7 @@
           "srn": {
             "type": "string",
             "description": "SRN of the model.",
-            "pattern": "^srn://inference\\.[^/]+/zones/[^/]+/model/[^/]+$"
-          },
-          "zone": {
-            "type": "string",
-            "description": "Zone of the model."
+            "pattern": "^srn://inference\\.[^/]+/regions/[^/]+/models/[^/]+$"
           }
         },
         "x-properties-order": [
@@ -497,8 +488,7 @@
           "nodes_support",
           "parameter_size_bits",
           "size_bytes",
-          "srn",
-          "zone"
+          "srn"
         ]
       },
       "scaleway.inference.v1.Model.Status": {

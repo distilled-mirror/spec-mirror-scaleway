@@ -1612,6 +1612,47 @@
             "scaleway": []
           }
         ]
+      },
+      "delete": {
+        "operationId": "DeleteCertificate",
+        "description": "Derived from scaleway-sdk-js (`API.deleteCertificate`): Scaleway publishes no OpenAPI document for this route.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "required": true,
+            "description": "Region to target. If none is passed will use default region from the config.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "deployment_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "certificate_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ]
       }
     }
   }

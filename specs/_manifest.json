@@ -118,7 +118,7 @@
     "output": "audit_trail_v1alpha1.json",
     "title": "Audit Trail API",
     "openapi": "3.1.0",
-    "paths": 17
+    "paths": 18
   },
   {
     "proto": "scaleway.autoscaling.v1alpha2.Api",

@@ -666,7 +666,7 @@
           "Bindings"
         ],
         "operationId": "DeleteAllBindingsMatchingSRN",
-        "summary": "Delete ALL bindings associated with a Scaleway Resource Name.",
+        "summary": "(Deprecated) Delete ALL bindings associated with a Scaleway Resource Name.",
         "parameters": [
           {
             "in": "query",
@@ -724,7 +724,7 @@
           "Bindings"
         ],
         "operationId": "DeleteAllBindingsMatchingValue",
-        "summary": "Delete ALL bindings associated with a value.",
+        "summary": "(Deprecated) Delete ALL bindings associated with a value.",
         "parameters": [
           {
             "in": "query",
@@ -1372,7 +1372,7 @@
           "Values"
         ],
         "operationId": "DeleteAllValuesMatchingKey",
-        "summary": "Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.",
+        "summary": "(Deprecated) Delete ALL values associated with a key. Fails if any of these values are currently bound to any resource.",
         "parameters": [
           {
             "in": "query",

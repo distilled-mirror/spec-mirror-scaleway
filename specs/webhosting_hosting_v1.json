@@ -387,7 +387,7 @@
           },
           "delete_hosting_at_end": {
             "type": "boolean",
-            "description": "Determines what happens at the end of the commitment period:.\nThe hosting may be deleted, automatically renewed, or switched to\nits configured post-commitment offer, which may have a different \nprice and billing period."
+            "description": "Determines what happens at the end of the commitment period:.\nThe hosting may be deleted, automatically renewed, or switched to\nits configured post-commitment offer, which may have a different\nprice and billing period."
           }
         },
         "x-properties-order": [

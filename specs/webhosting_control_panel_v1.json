@@ -13,7 +13,7 @@
   "tags": [
     {
       "name": "Control Panels",
-      "description": "Control panels represent the type of administration panel used to manage your Web Hosting plan. At Scaleway cPanel and Plesk are available. \n"
+      "description": "Control panels represent the type of administration panel used to manage your Web Hosting plan. At Scaleway cPanel and Plesk are available.\n"
     }
   ],
   "components": {

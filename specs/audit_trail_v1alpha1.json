@@ -3084,6 +3084,37 @@
           "firing"
         ]
       },
+      "scaleway.audit_trail.v1alpha1.Trail": {
+        "type": "object",
+        "properties": {
+          "organization_id": {
+            "type": "string",
+            "description": "ID of the Organization the trail belongs to. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "cockpit": {
+            "description": "The Cockpit destination of the trail. When set, Audit Trail events are pushed to the targeted Cockpit project. When null, forwarding is disabled.",
+            "$ref": "#/components/schemas/scaleway.audit_trail.v1alpha1.Trail.Cockpit"
+          }
+        },
+        "x-properties-order": [
+          "organization_id",
+          "cockpit"
+        ]
+      },
+      "scaleway.audit_trail.v1alpha1.Trail.Cockpit": {
+        "type": "object",
+        "properties": {
+          "target_project_id": {
+            "type": "string",
+            "description": "ID of the Project under which the Organization's Audit Trail events are pushed to Cockpit. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          }
+        },
+        "x-properties-order": [
+          "target_project_id"
+        ]
+      },
       "scaleway.audit_trail.v1alpha1.VpcConnectorInfo": {
         "type": "object",
         "properties": {
@@ -5535,6 +5566,139 @@
           {
             "lang": "HTTPie",
             "source": "http POST \"https://api.scaleway.com/audit-trail/v1alpha1/regions/{region}/test-custom-alert-rule\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  occurrences:=42 \\\n  organization_id=\"string\" \\\n  query=\"string\""
+          }
+        ]
+      }
+    },
+    "/audit-trail/v1alpha1/regions/{region}/trails/{organization_id}": {
+      "get": {
+        "operationId": "GetTrail",
+        "summary": "Get a trail",
+        "description": "Retrieve the trail of a specified Organization, including Cockpit's target Project ID to which Audit Trail events are pushed. You must specify the `organization_id`.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par",
+                "nl-ams"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "organization_id",
+            "description": "ID of the Organization whose trail is to be retrieved.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.audit_trail.v1alpha1.Trail"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/audit-trail/v1alpha1/regions/{region}/trails/{organization_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/audit-trail/v1alpha1/regions/{region}/trails/{organization_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateTrail",
+        "summary": "Update a trail",
+        "description": "Update the destination of the trail of a specified Organization. Set the `cockpit` destination to change the `target_project_id` to which Audit Trail events are pushed. An omitted or `null` `cockpit` clears the destination and disables forwarding.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par",
+                "nl-ams"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "organization_id",
+            "description": "ID of the Organization whose trail is to be updated.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.audit_trail.v1alpha1.Trail"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cockpit": {
+                    "description": "The new Cockpit destination of the trail, used to update the target Project ID to which its Audit Trail events are pushed.\nAn omitted or `null` `cockpit` clears the destination and disables forwarding.",
+                    "$ref": "#/components/schemas/scaleway.audit_trail.v1alpha1.Trail.Cockpit"
+                  }
+                },
+                "x-properties-order": [
+                  "cockpit"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X PATCH \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/audit-trail/v1alpha1/regions/{region}/trails/{organization_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http PATCH \"https://api.scaleway.com/audit-trail/v1alpha1/regions/{region}/trails/{organization_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
           }
         ]
       }

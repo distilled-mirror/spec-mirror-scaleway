@@ -17,7 +17,7 @@
     },
     {
       "name": "Containers",
-      "description": "A container is a package of software that includes all dependencies: code, runtime, configuration, and system libraries so that it can run on any host system. \nScaleway provides you with custom Docker images that are entirely handled for you in the cloud. \nWith Containers, you can rely on your favorite technologies such as Django or Ruby On Rails.\n"
+      "description": "A container is a package of software that includes all dependencies: code, runtime, configuration, and system libraries so that it can run on any host system.\nScaleway provides you with custom Docker images that are entirely handled for you in the cloud.\nWith Containers, you can rely on your favorite technologies such as Django or Ruby On Rails.\n"
     },
     {
       "name": "Crons",
@@ -295,7 +295,7 @@
           },
           "failure_threshold": {
             "type": "integer",
-            "description": "Number of consecutive health check failures before considering the container unhealthy.\nDuring a deployment, if a newly created container fails to pass the health check, the deployment is aborted. \nAs a result, lowering this value can help to reduce the time it takes to detect a failed deployment.",
+            "description": "Number of consecutive health check failures before considering the container unhealthy.\nDuring a deployment, if a newly created container fails to pass the health check, the deployment is aborted.\nAs a result, lowering this value can help to reduce the time it takes to detect a failed deployment.",
             "format": "uint32"
           },
           "interval": {

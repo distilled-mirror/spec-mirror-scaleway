@@ -1,0 +1,2107 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Managed DATA ORCHESTRATOR API",
+    "description": "Welcome to the Scaleway **Data Orchestrator** API. Data Orchestrator is designed to help you automate, schedule, and manage data workflows across various systems and environments. It is vendor-neutral and open-source, as it is based on the [Open Workflow Specification](https://open-workflow-specification.org/).\n\nA **workflow** is a structured sequence of action and logic tasks that defines an end-to-end data process. You define the workflow once, and Data Orchestrator takes care of running it reliably and gives you full visibility on every execution.\n\n<Message type=\"note\">\nData Orchestrator is currently in **Public Beta**. During this Beta period, workflows run Scaleway Serverless Jobs, Serverless Functions, Serverless Containers, HTTP calls, Object Storage, and Generative API.\n</Message>\n\n## Concepts\n\n### Workflow definition\n\nA **Workflow definition** is the declarative blueprint of a workflow, typically described in YAML. It specifies the tasks, dependencies, conditions and execution parameters, and holds the workflow DSL, its environment variables and an optional cron schedule. It is version-controlled, reusable and portable across environments.\n\n### Workflow version\n\nA **Workflow version** is a versioned snapshot of a workflow definition. Workflow definitions are versioned so you can evolve your workflow while keeping full control over which version is executed. The `is_current` flag designates the version selected to run.\n\n### Workflow run\n\nA **Workflow run** is the runtime instance of a workflow definition. It tracks the state, logs and results of every task, providing full observability and auditability. Runs can succeed, fail or be paused, with detailed insights for debugging.\n\n### Task\n\nA **task** is a unit of work inside a workflow. Two categories of tasks exist:\n\n- **Action tasks** perform concrete work: **Serverless Jobs** (long-running batch processes), **Serverless Functions** (lightweight event-driven code), **Serverless Containers**, **HTTP calls**, **Object Storage** and **Generative API**.\n- **Logic tasks** control the flow and decision-making within a workflow: **Switch**, **Fork** and **Try-catch**.\n\n### Trigger\n\nA **trigger** is the event that initiates a workflow run. Triggers can be:\n\n- **Manual** — the run is started by the user via the console or the API (ideal for testing).\n- **Schedule** — automatic execution based on time, set with a cron expression and its timezone.\n\n## Getting started\n\n1. Make sure you have a Scaleway account and an [API key](https://www.scaleway.com/en/docs/iam/how-to/create-api-keys/) with the necessary IAM permissions, and export your credentials:\n\n    ```bash\n    export SCW_SECRET_KEY=\"<API secret key>\"\n    export SCW_DEFAULT_REGION=\"fr-par\"\n    export SCW_PROJECT_ID=\"<Scaleway Project ID>\"\n    ```\n\n2. **Create a workflow definition**: a workflow definition holds the workflow DSL and its configuration:\n\n    ```bash\n    curl -X POST \\\n      -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n      -H \"Content-Type: application/json\" \\\n      \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/$SCW_DEFAULT_REGION/workflow-definitions\" \\\n      -d '{\n        \"name\": \"my-first-workflow\",\n        \"project_id\": \"'\"$SCW_PROJECT_ID\"'\",\n        \"workflow_version\": {\n          \"name\": \"v1\",\n          \"workflow_dsl\": \"version: 1.0.3\\nname: my-first-workflow\\n\"\n        }\n      }'\n    ```\n\n3. **Start a workflow run** on your definition:\n\n    ```bash\n    curl -X POST \\\n      -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n      \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/$SCW_DEFAULT_REGION/workflow-definitions/<workflow-definition-id>/start\"\n    ```\n\n4. **Follow your run**: list your workflow runs and inspect their status, task runs and output.\n\n## Technical information\n\n### Availability\n\nThe Data Orchestrator API is regional. It is available in the following region:\n\n- **Paris** — `fr-par`\n\n## Going further\n\nFor more information about Data Orchestrator, check out:\n\n- Our [Data Orchestrator documentation](https://www.scaleway.com/en/docs/data-orchestrator/)\n- The [Data Orchestrator Quickstart](https://www.scaleway.com/en/docs/data-orchestrator/quickstart/)\n- The [Open Workflow Specification](https://open-workflow-specification.org/) used for the workflow DSL.",
+    "version": "v1alpha2"
+  },
+  "servers": [
+    {
+      "url": "https://api.scaleway.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Workflow definitions",
+      "description": "A Workflow definition is a template for a data_orchestrator. It contains all the information necessary to run the workflow. The definition acts as a blueprint for workflow runs"
+    },
+    {
+      "name": "Workflow runs",
+      "description": "A Workflow run is an execution of a Workflow definition. It contains all the information about the execution"
+    },
+    {
+      "name": "Workflow versions",
+      "description": "A Workflow version is Workflow definition version."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "scaleway.data_orchestrator.v1alpha2.CreateWorkflowDefinitionRequest.CronScheduleConfig": {
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "type": "string"
+          },
+          "timezone_identifier": {
+            "type": "string"
+          },
+          "overlap": {
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ScheduleOverlapPolicy"
+          }
+        },
+        "x-properties-order": [
+          "schedule",
+          "timezone_identifier",
+          "overlap"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.CreateWorkflowDefinitionRequest.WorkflowVersionConfig": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9-_]{3,50}$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "workflow_dsl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "x-properties-order": [
+          "name",
+          "description",
+          "workflow_dsl"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.CronSchedule": {
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "type": "string",
+            "description": "UNIX cron schedule to run workflow (e.g., '* * * * *')."
+          },
+          "timezone_identifier": {
+            "type": "string",
+            "description": "Timezone identifier for the cron schedule, in tz database format (e.g., 'Europe/Paris')."
+          },
+          "overlap": {
+            "description": "Controls what happens when an WorkflowDefinition would be started by a Schedule.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ScheduleOverlapPolicy"
+          }
+        },
+        "required": [
+          "schedule",
+          "timezone_identifier",
+          "overlap"
+        ],
+        "x-properties-order": [
+          "schedule",
+          "timezone_identifier",
+          "overlap"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.DefaultTask": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "description": "Current reason of the task run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask.DefaultRunReason"
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Error message of the task run."
+          }
+        },
+        "x-properties-order": [
+          "reason",
+          "error_message"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.DefaultTask.DefaultRunReason": {
+        "type": "string",
+        "enum": [
+          "unknown_default_run_reason",
+          "timeout",
+          "cancellation",
+          "technical_error",
+          "functional_error"
+        ],
+        "default": "unknown_default_run_reason"
+      },
+      "scaleway.data_orchestrator.v1alpha2.ListWorkflowDefinitionsRequest.OrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc",
+          "name_asc",
+          "name_desc",
+          "updated_at_asc",
+          "updated_at_desc"
+        ],
+        "default": "created_at_asc"
+      },
+      "scaleway.data_orchestrator.v1alpha2.ListWorkflowDefinitionsResponse": {
+        "type": "object",
+        "properties": {
+          "workflow_definitions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowDefinition"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "workflow_definitions",
+          "total_count"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.ListWorkflowRunsRequest.OrderBy": {
+        "type": "string",
+        "enum": [
+          "created_at_asc",
+          "created_at_desc",
+          "terminated_at_asc",
+          "terminated_at_desc",
+          "duration_asc",
+          "duration_desc",
+          "workflow_definition_name_asc",
+          "workflow_definition_name_desc"
+        ],
+        "default": "created_at_asc"
+      },
+      "scaleway.data_orchestrator.v1alpha2.ListWorkflowRunsResponse": {
+        "type": "object",
+        "properties": {
+          "workflow_runs": {
+            "type": "array",
+            "description": "List workflow runs.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+            }
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total count of workflow runs.",
+            "format": "uint64"
+          }
+        },
+        "x-properties-order": [
+          "workflow_runs",
+          "total_count"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.ObjectStorageTask": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ObjectStorageTask.Reason"
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "x-properties-order": [
+          "action",
+          "reason",
+          "error_message"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.ObjectStorageTask.Reason": {
+        "type": "string",
+        "enum": [
+          "unknown_default_run_reason",
+          "timeout",
+          "cancellation",
+          "technical_error",
+          "functional_error"
+        ],
+        "default": "unknown_default_run_reason"
+      },
+      "scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask": {
+        "type": "object",
+        "properties": {
+          "container_id": {
+            "type": "string",
+            "description": "Unique identifier of the serverless-container deployment."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "Image deployed with the serverless-container."
+          },
+          "status": {
+            "description": "Status of the serverless-container deployment.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Status"
+          },
+          "action": {
+            "description": "Action used on the serverless-container deployment.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Action"
+          },
+          "reason": {
+            "description": "Current reason of the task run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Reason"
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Error message of the task run."
+          }
+        },
+        "x-properties-order": [
+          "container_id",
+          "image_url",
+          "status",
+          "action",
+          "reason",
+          "error_message"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Action": {
+        "type": "string",
+        "enum": [
+          "unknown_action",
+          "deploy",
+          "delete",
+          "get"
+        ],
+        "default": "unknown_action"
+      },
+      "scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Reason": {
+        "type": "string",
+        "enum": [
+          "unknown_reason",
+          "timeout",
+          "cancellation",
+          "technical_error",
+          "functional_error"
+        ],
+        "default": "unknown_reason"
+      },
+      "scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask.Status": {
+        "type": "string",
+        "enum": [
+          "unknown_status",
+          "ready",
+          "deleting",
+          "error",
+          "updating",
+          "creating",
+          "locked",
+          "upgrading",
+          "rebalancing",
+          "triggering"
+        ],
+        "default": "unknown_status"
+      },
+      "scaleway.data_orchestrator.v1alpha2.RunStatus": {
+        "type": "string",
+        "enum": [
+          "unknown_run_status",
+          "initialized",
+          "validated",
+          "queued",
+          "running",
+          "succeeded",
+          "failed",
+          "interrupting",
+          "interrupted",
+          "pausing",
+          "paused"
+        ],
+        "default": "unknown_run_status"
+      },
+      "scaleway.data_orchestrator.v1alpha2.ScheduleOverlapPolicy": {
+        "type": "string",
+        "enum": [
+          "unknown_schedule_overlap_policy",
+          "forbid",
+          "buffer_one",
+          "buffer_all",
+          "allow_all"
+        ],
+        "default": "unknown_schedule_overlap_policy"
+      },
+      "scaleway.data_orchestrator.v1alpha2.ServerlessJobsTask": {
+        "type": "object",
+        "properties": {
+          "job_definition_id": {
+            "type": "string",
+            "description": "Unique identifier of the serverless-job definition."
+          },
+          "job_run_id": {
+            "type": "string",
+            "description": "Unique identifier of the serverless-job run."
+          },
+          "reason": {
+            "description": "Terminated reason of the serverless-job run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ServerlessJobsTask.ServerlessJobRunReason"
+          },
+          "exit_code": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Exit code of the serverless-job run.",
+            "format": "int32"
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Error message of the serverless-job run."
+          }
+        },
+        "x-properties-order": [
+          "job_definition_id",
+          "job_run_id",
+          "reason",
+          "exit_code",
+          "error_message"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.ServerlessJobsTask.ServerlessJobRunReason": {
+        "type": "string",
+        "enum": [
+          "unknown_serverless_job_run_reason",
+          "invalid_request",
+          "timeout",
+          "cancellation",
+          "technical_error",
+          "image_not_found",
+          "invalid_image",
+          "memory_usage_exceeded",
+          "storage_usage_exceeded",
+          "exited_with_error",
+          "secret_disabled",
+          "secret_not_found",
+          "quota_exceeded"
+        ],
+        "default": "unknown_serverless_job_run_reason"
+      },
+      "scaleway.data_orchestrator.v1alpha2.TaskRun": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "task_name": {
+            "type": "string",
+            "description": "Unique identifier of the task."
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Creation date of the task run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Last modification date of the task run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "terminated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Terminated date of the task run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "duration": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Run duration of the task run. (in seconds)",
+            "example": "2.5s"
+          },
+          "status": {
+            "description": "Status of the task run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunStatus"
+          },
+          "output": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Output of the task run."
+          },
+          "serverless_job_task_run_details": {
+            "description": "Task run details for a serverless-job task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ServerlessJobsTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "raise_task_run_details": {
+            "description": "Task run details for a raise task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "set_task_run_details": {
+            "description": "Task run details for a set task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "call_http_task_run_details": {
+            "description": "Task run details for a call http task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wait_task_run_details": {
+            "description": "Task run details for a wait task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "serverless_function_task_run_details": {
+            "description": "Task run details for a serverless-function task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "run_serverless_container_task_run_details": {
+            "description": "Task run details for a run-serverless-container task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunServerlessContainersTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "call_serverless_container_task_run_details": {
+            "description": "Task run details for a call-serverless-container task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object_storage_task_run_details": {
+            "description": "Task run details for a Object Storage task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ObjectStorageTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "generative_api_task_run_details": {
+            "description": "Task run details for a generative-api task.\nPrecisely one of serverless_job_task_run_details, raise_task_run_details, set_task_run_details, call_http_task_run_details, wait_task_run_details, serverless_function_task_run_details, run_serverless_container_task_run_details, call_serverless_container_task_run_details, object_storage_task_run_details, generative_api_task_run_details can be set.",
+            "x-one-of": "task_run_details",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.DefaultTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "run_iteration": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Run iteration of the task (in loop or retry).",
+            "format": "int32"
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "task_name",
+          "created_at",
+          "updated_at",
+          "terminated_at",
+          "duration",
+          "status",
+          "output",
+          "serverless_job_task_run_details",
+          "raise_task_run_details",
+          "set_task_run_details",
+          "call_http_task_run_details",
+          "wait_task_run_details",
+          "serverless_function_task_run_details",
+          "run_serverless_container_task_run_details",
+          "call_serverless_container_task_run_details",
+          "object_storage_task_run_details",
+          "generative_api_task_run_details",
+          "run_iteration"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.TriggerType": {
+        "type": "string",
+        "enum": [
+          "unknown_trigger_type",
+          "manual",
+          "scheduled"
+        ],
+        "default": "unknown_trigger_type"
+      },
+      "scaleway.data_orchestrator.v1alpha2.UpdateWorkflowDefinitionRequest.CronScheduleConfig": {
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timezone_identifier": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "overlap": {
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ScheduleOverlapPolicy"
+          }
+        },
+        "x-properties-order": [
+          "schedule",
+          "timezone_identifier",
+          "overlap"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.WorkflowDefinition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the workflow definition."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the workflow definition."
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Project ID. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Creation date of the workflow definition. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Last modification date of the workflow definition. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "versions": {
+            "type": "array",
+            "description": "Versions of workflow.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowVersion"
+            }
+          },
+          "cron_schedule": {
+            "description": "Configure a cron for the workflow.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.CronSchedule"
+          },
+          "environment_variables": {
+            "type": "object",
+            "description": "Environment variables of the workflow.",
+            "properties": {
+              "<environment_variableKey>": {
+                "type": "string",
+                "description": "Environment variables of the workflow."
+              }
+            },
+            "additionalProperties": true
+          },
+          "workflow_timeout": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timeout of the workflow in seconds. (in seconds)",
+            "example": "2.5s"
+          },
+          "last_run": {
+            "description": "Last workflow run information.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRunInfo"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the workflow."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the workflow definition.",
+            "pattern": "^srn://data-orchestrator\\.[^/]+/regions/[^/]+/workflow-definitions/[^/]+$"
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "name",
+          "description",
+          "project_id",
+          "created_at",
+          "updated_at",
+          "versions",
+          "cron_schedule",
+          "environment_variables",
+          "workflow_timeout",
+          "last_run",
+          "region",
+          "srn"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.WorkflowRun": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "workflow_definition_id": {
+            "type": "string",
+            "description": "Unique identifier of the workflow definition. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "workflow_definition_name": {
+            "type": "string",
+            "description": "Name of the workflow definition."
+          },
+          "workflow_version_id": {
+            "type": "string",
+            "description": "Unique identifier of the workflow version. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "project_id": {
+            "type": "string",
+            "description": "Unique identifier of the project. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "trigger_type": {
+            "description": "Type of trigger that started the workflow run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.TriggerType"
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Creation date of the workflow run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Last modification date of the workflow run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "terminated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Terminated date of the workflow run. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "duration": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Run duration of the workflow run. (in seconds)",
+            "example": "2.5s"
+          },
+          "status": {
+            "description": "Current status of the workflow run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunStatus"
+          },
+          "reason": {
+            "description": "Current reason of the workflow run.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRunReason"
+          },
+          "task_runs": {
+            "type": "array",
+            "description": "Task runs of the workflow run.",
+            "items": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.TaskRun"
+            }
+          },
+          "environment_variables": {
+            "type": "object",
+            "description": "Environment variables of the workflow run.",
+            "properties": {
+              "<environment_variableKey>": {
+                "type": "string",
+                "description": "Environment variables of the workflow run."
+              }
+            },
+            "additionalProperties": true
+          },
+          "workflow_dsl": {
+            "type": "string",
+            "description": "DSL of workflow in YAML format based from https://open-workflow-specification.org/schemas/1.0.3/workflow.yaml."
+          },
+          "output": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Output of the workflow run."
+          },
+          "error_message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Error message of the workflow run."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the workflow run."
+          },
+          "srn": {
+            "type": "string",
+            "description": "The SRN of the workflow run.",
+            "pattern": "^srn://data-orchestrator\\.[^/]+/regions/[^/]+/workflow-runs/[^/]+$"
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "workflow_definition_id",
+          "workflow_definition_name",
+          "workflow_version_id",
+          "project_id",
+          "trigger_type",
+          "created_at",
+          "updated_at",
+          "terminated_at",
+          "duration",
+          "status",
+          "reason",
+          "task_runs",
+          "environment_variables",
+          "workflow_dsl",
+          "output",
+          "error_message",
+          "region",
+          "srn"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.WorkflowRunInfo": {
+        "type": "object",
+        "properties": {
+          "workflow_run_id": {
+            "type": "string",
+            "description": "Workflow run ID. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "status": {
+            "description": "Workflow run status.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunStatus"
+          },
+          "reason": {
+            "description": "Workflow run reason.",
+            "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRunReason"
+          }
+        },
+        "x-properties-order": [
+          "workflow_run_id",
+          "status",
+          "reason"
+        ]
+      },
+      "scaleway.data_orchestrator.v1alpha2.WorkflowRunReason": {
+        "type": "string",
+        "enum": [
+          "unknown_workflow_run_reason",
+          "timeout",
+          "cancellation",
+          "technical_error",
+          "functional_error",
+          "not_found"
+        ],
+        "default": "unknown_workflow_run_reason"
+      },
+      "scaleway.data_orchestrator.v1alpha2.WorkflowVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier. (UUID format)",
+            "example": "6170692e-7363-616c-6577-61792e636f6d"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the workflow version."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the workflow version."
+          },
+          "created_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Creation date of the workflow version. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Last modification date of the workflow version. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "deleted_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Deleted date of the workflow version. (RFC 3339 format)",
+            "format": "date-time",
+            "example": "2022-03-22T12:34:56.123456Z"
+          },
+          "workflow_dsl": {
+            "type": "string",
+            "description": "DSL of workflow in YAML format based from https://open-workflow-specification.org/schemas/1.0.3/workflow.yaml."
+          },
+          "is_current": {
+            "type": "boolean",
+            "description": "Indicate if the version is the current selected by the workflow to run."
+          }
+        },
+        "x-properties-order": [
+          "id",
+          "name",
+          "description",
+          "created_at",
+          "updated_at",
+          "deleted_at",
+          "workflow_dsl",
+          "is_current"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "scaleway": {
+        "in": "header",
+        "name": "X-Auth-Token",
+        "type": "apiKey"
+      }
+    }
+  },
+  "paths": {
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions": {
+      "get": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "ListWorkflowDefinitions",
+        "summary": "List all your workflow definitions with filters",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "format": "uint32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ListWorkflowDefinitionsRequest.OrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9-_]+$"
+            }
+          },
+          {
+            "in": "query",
+            "name": "statuses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunStatus"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_after",
+            "description": "(RFC 3339 format)",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2022-03-22T12:34:56.123456Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_before",
+            "description": "(RFC 3339 format)",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2022-03-22T12:34:56.123456Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "trigger_types",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.TriggerType"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "(UUID format)\nPrecisely one of project_id, organization_id can be set.",
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d",
+              "x-one-of": "scope"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "(UUID format)\nPrecisely one of project_id, organization_id can be set.",
+            "schema": {
+              "type": "string",
+              "example": "6170692e-7363-616c-6577-61792e636f6d",
+              "x-one-of": "scope"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ListWorkflowDefinitionsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "CreateWorkflowDefinition",
+        "summary": "Create a new workflow definition in a specified Project",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowDefinition"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the workflow definition.",
+                    "pattern": "^[A-Za-z0-9-_]{3,50}$"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the workflow."
+                  },
+                  "project_id": {
+                    "type": "string",
+                    "description": "UUID of the Scaleway Project containing the workflow."
+                  },
+                  "environment_variables": {
+                    "type": "object",
+                    "description": "Environment variables of the workflow.",
+                    "properties": {
+                      "<environment_variableKey>": {
+                        "type": "string",
+                        "description": "Environment variables of the workflow."
+                      }
+                    },
+                    "additionalProperties": true
+                  },
+                  "workflow_timeout": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Timeout of the workflow in seconds. (in seconds)",
+                    "example": "2.5s"
+                  },
+                  "cron_schedule": {
+                    "description": "Configure a cron for the workflow.",
+                    "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.CreateWorkflowDefinitionRequest.CronScheduleConfig"
+                  },
+                  "workflow_version": {
+                    "description": "Version of the workflow definition.",
+                    "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.CreateWorkflowDefinitionRequest.WorkflowVersionConfig"
+                  }
+                },
+                "required": [
+                  "name",
+                  "project_id",
+                  "workflow_version"
+                ],
+                "x-properties-order": [
+                  "name",
+                  "description",
+                  "project_id",
+                  "environment_variables",
+                  "workflow_timeout",
+                  "cron_schedule",
+                  "workflow_version"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"description\": \"string\",\n    \"environment_variables\": {\n        \"<environment_variableKey>\": \"string\"\n    },\n    \"name\": \"string\",\n    \"project_id\": \"string\",\n    \"workflow_version\": \"\"\n  }' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  description=\"string\" \\\n  environment_variables:='{\n    \"<environment_variableKey>\": \"string\"\n  }' \\\n  name=\"string\" \\\n  project_id=\"string\" \\\n  workflow_version=\"\""
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}": {
+      "get": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "GetWorkflowDefinition",
+        "summary": "Get a workflow definition by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_definition_id",
+            "description": "UUID of the workflow definition to get.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowDefinition"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "UpdateWorkflowDefinition",
+        "summary": "Update an existing workflow definition by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_definition_id",
+            "description": "UUID of the workflow definition to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowDefinition"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name of the workflow definition.",
+                    "pattern": "^[A-Za-z0-9-_]+$"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Description of the workflow."
+                  },
+                  "environment_variables": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Environment variables of the workflow.",
+                    "properties": {
+                      "<key>": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "workflow_timeout": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Timeout of the workflow in seconds. (in seconds)",
+                    "example": "2.5s"
+                  },
+                  "cron_schedule": {
+                    "description": "Configure a cron for the workflow.",
+                    "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.UpdateWorkflowDefinitionRequest.CronScheduleConfig"
+                  }
+                },
+                "x-properties-order": [
+                  "name",
+                  "description",
+                  "environment_variables",
+                  "workflow_timeout",
+                  "cron_schedule"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X PATCH \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http PATCH \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "DeleteWorkflowDefinition",
+        "summary": "Delete an existing workflow definition by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_definition_id",
+            "description": "UUID of the workflow definition to delete.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}/start": {
+      "post": {
+        "tags": [
+          "Workflow definitions"
+        ],
+        "operationId": "StartWorkflowDefinition",
+        "summary": "Run an existing workflow definition using its unique identifier and create a new workflow run",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_definition_id",
+            "description": "UUID of the workflow definition to start.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "environment_variables": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Contextual environment variables for this specific workflow run.",
+                    "properties": {
+                      "<key>": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "x-properties-order": [
+                  "environment_variables"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}/start\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-definitions/{workflow_definition_id}/start\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-runs": {
+      "get": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "ListWorkflowRuns",
+        "summary": "List all your workflow runs with filters",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "format": "uint32"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order_by",
+            "schema": {
+              "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ListWorkflowRunsRequest.OrderBy"
+            }
+          },
+          {
+            "in": "query",
+            "name": "workflow_definition_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "statuses",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.RunStatus"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_after",
+            "description": "(RFC 3339 format)",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2022-03-22T12:34:56.123456Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "created_before",
+            "description": "(RFC 3339 format)",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2022-03-22T12:34:56.123456Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "trigger_types",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.TriggerType"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "workflow_definition_name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project_id",
+            "description": "Precisely one of project_id, organization_id can be set.",
+            "schema": {
+              "type": "string",
+              "x-one-of": "scope"
+            }
+          },
+          {
+            "in": "query",
+            "name": "organization_id",
+            "description": "Precisely one of project_id, organization_id can be set.",
+            "schema": {
+              "type": "string",
+              "x-one-of": "scope"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.ListWorkflowRunsResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}": {
+      "get": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "GetWorkflowRun",
+        "summary": "Get a workflow run by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_run_id",
+            "description": "UUID of the workflow run to get.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X GET \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http GET \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "DeleteWorkflowRun",
+        "summary": "Delete an existing workflow run by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_run_id",
+            "description": "UUID of the workflow run to delete.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X DELETE \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http DELETE \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/pause": {
+      "post": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "PauseWorkflowRun",
+        "summary": "Pause a workflow run using its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_run_id",
+            "description": "UUID of the workflow run to pause.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/pause\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/pause\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/resume": {
+      "post": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "ResumeWorkflowRun",
+        "summary": "Resume a workflow run using its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_run_id",
+            "description": "UUID of the workflow run to resume.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/resume\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/resume\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/terminate": {
+      "post": {
+        "tags": [
+          "Workflow runs"
+        ],
+        "operationId": "TerminateWorkflowRun",
+        "summary": "Terminate a workflow run using its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_run_id",
+            "description": "UUID of the workflow run to terminate.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowRun"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/terminate\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-runs/{workflow_run_id}/terminate\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    },
+    "/data-orchestrator/v1alpha2/regions/{region}/workflow-versions/{workflow_version_id}": {
+      "patch": {
+        "tags": [
+          "Workflow versions"
+        ],
+        "operationId": "UpdateWorkflowVersion",
+        "summary": "Update an existing workflow version by its unique identifier",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "region",
+            "description": "The region you want to target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "fr-par"
+              ]
+            }
+          },
+          {
+            "in": "path",
+            "name": "workflow_version_id",
+            "description": "UUID of the workflow version to update.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.data_orchestrator.v1alpha2.WorkflowVersion"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name of the workflow version."
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Description of the workflow version."
+                  },
+                  "workflow_dsl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DSL of workflow in YAML format based from https://open-workflow-specification.org/schemas/1.0.3/workflow.yaml."
+                  }
+                },
+                "x-properties-order": [
+                  "name",
+                  "description",
+                  "workflow_dsl"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X PATCH \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}' \\\n  \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-versions/{workflow_version_id}\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http PATCH \"https://api.scaleway.com/data-orchestrator/v1alpha2/regions/{region}/workflow-versions/{workflow_version_id}\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
+          }
+        ]
+      }
+    }
+  }
+}

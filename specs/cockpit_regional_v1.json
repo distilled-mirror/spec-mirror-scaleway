@@ -556,7 +556,7 @@
           "srn": {
             "type": "string",
             "description": "The SRN of the exporter.",
-            "pattern": "^srn://cockpit\\.[^/]+/regions/[^/]+/exporters/[^/]+$"
+            "pattern": "^srn://cockpit\\.[^/]+/regions/[^/]+/data-sources/[^/]+/exporters/[^/]+$"
           }
         },
         "x-properties-order": [

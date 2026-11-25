@@ -235,7 +235,8 @@
           "msgq_cluster",
           "edge_vpc_endpoint",
           "dviz_cluster",
-          "nats_cluster"
+          "nats_cluster",
+          "kvdb_instance"
         ],
         "default": "unknown_type"
       },

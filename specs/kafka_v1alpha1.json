@@ -143,6 +143,11 @@
                 "type": "null"
               }
             ]
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the cluster.",
+            "pattern": "^srn://kafka\\.[^/]+/regions/[^/]+/clusters/[^/]+$"
           }
         },
         "x-properties-order": [
@@ -162,7 +167,8 @@
           "updated_at",
           "region",
           "multi_az",
-          "mono_az"
+          "mono_az",
+          "srn"
         ]
       },
       "scaleway.kafka.v1alpha1.Cluster.MonoAZDetails": {
@@ -309,6 +315,15 @@
                 "type": "null"
               }
             ]
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the endpoint.",
+            "pattern": "^srn://kafka\\.[^/]+/regions/[^/]+/endpoints/[^/]+$"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the endpoint."
           }
         },
         "x-properties-order": [
@@ -316,7 +331,9 @@
           "dns_records",
           "port",
           "private_network",
-          "public_network"
+          "public_network",
+          "srn",
+          "region"
         ]
       },
       "scaleway.kafka.v1alpha1.Endpoint.PrivateNetworkDetails": {
@@ -528,6 +545,15 @@
           "cluster_range": {
             "type": "string",
             "description": "Cluster range associated with the node type offer."
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the node type.",
+            "pattern": "^srn://kafka\\.[^/]+/regions/[^/]+/node-types/[^/]+$"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region on which the node type is available."
           }
         },
         "x-properties-order": [
@@ -539,7 +565,9 @@
           "available_volume_types",
           "disabled",
           "beta",
-          "cluster_range"
+          "cluster_range",
+          "srn",
+          "region"
         ]
       },
       "scaleway.kafka.v1alpha1.NodeType.Stock": {
@@ -591,11 +619,28 @@
         "type": "object",
         "properties": {
           "username": {
-            "type": "string"
+            "type": "string",
+            "description": "Name of the user."
+          },
+          "cluster_id": {
+            "type": "string",
+            "description": "ID of the user's cluster."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the cluster associated with the user."
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the user.",
+            "pattern": "^srn://kafka\\.[^/]+/regions/[^/]+/clusters/[^/]+/users/[^/]+$"
           }
         },
         "x-properties-order": [
-          "username"
+          "username",
+          "cluster_id",
+          "region",
+          "srn"
         ]
       },
       "scaleway.kafka.v1alpha1.Version": {
@@ -620,12 +665,23 @@
             "items": {
               "$ref": "#/components/schemas/scaleway.kafka.v1alpha1.Version.AvailableSetting"
             }
+          },
+          "srn": {
+            "type": "string",
+            "description": "SRN of the version.",
+            "pattern": "^srn://kafka\\.[^/]+/regions/[^/]+/versions/[^/]+$"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the version."
           }
         },
         "x-properties-order": [
           "version",
           "end_of_life_at",
-          "available_settings"
+          "available_settings",
+          "srn",
+          "region"
         ]
       },
       "scaleway.kafka.v1alpha1.Version.AvailableSetting": {

@@ -253,6 +253,17 @@
     "paths": 13
   },
   {
+    "proto": "scaleway.data_orchestrator.v1alpha2.Api",
+    "product": "data_orchestrator",
+    "version": "v1alpha2",
+    "api": "Api",
+    "url": "https://www.scaleway.com/en/developers/api/data-orchestrator/v1alpha2/schema.yml",
+    "output": "data_orchestrator_v1alpha2.json",
+    "title": "Managed DATA ORCHESTRATOR API",
+    "openapi": "3.1.0",
+    "paths": 9
+  },
+  {
     "proto": "scaleway.datalab.v1beta1.Api",
     "product": "datalab",
     "version": "v1beta1",

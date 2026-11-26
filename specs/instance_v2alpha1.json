@@ -681,7 +681,7 @@
             "description": "Placement group name."
           },
           "policy_type": {
-            "description": "Select the behavior of the placement group, either low_latency (group) or max_availability (spread).",
+            "description": "Type of the placement group.\nThe type determines how servers within the Placement Group (members) will be allocated, by constraining their location.\n\nWith `low_latency`, the members are allocated as close to each other as possible.\n\nWith `max_availability` or `max_availability_enforced`, the members are spread across different physical hosts to maximize availability.\nThe difference between `max_availability` and `max_availability_enforced` is the behavior when the policy cannot be satisfied:\n\n- with `max_availability`, the member is allowed to start on a physical node that already holds another member;\n\n- with `max_availability_enforced`, the member will fail to start after a short amount of time.",
             "$ref": "#/components/schemas/scaleway.instance.v2alpha1.PlacementGroup.PolicyType"
           },
           "tags": {
@@ -731,13 +731,15 @@
         "enum": [
           "unknown_policy_type",
           "low_latency",
-          "max_availability"
+          "max_availability",
+          "max_availability_enforced"
         ],
         "x-enum-descriptions": {
           "values": {
             "unknown_policy_type": "Unknown policy type",
-            "low_latency": "Ensures that all servers in the placement group are placed on the same physical host to minimize latency",
-            "max_availability": "Distributes servers across multiple physical hosts to maximize availability"
+            "low_latency": "Ensures that all servers in the placement group are located fairly closely to each other to minimize latency",
+            "max_availability": "Distributes servers across multiple physical hosts to maximize availability. This policy may be ignored if the constraints cannot be met.",
+            "max_availability_enforced": "Distributes servers across multiple physical hosts to maximize availability. Servers will refuse to start if the constraints cannot be met."
           }
         },
         "default": "unknown_policy_type"
@@ -5372,7 +5374,7 @@
                   },
                   "move_allowed": {
                     "type": "boolean",
-                    "description": "Whether moving the IP is allowed."
+                    "description": "When enabled, allows attaching the IP even if it is already attached to another server."
                   }
                 },
                 "x-properties-order": [

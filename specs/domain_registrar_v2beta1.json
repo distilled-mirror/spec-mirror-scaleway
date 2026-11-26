@@ -2777,6 +2777,196 @@
             "source": "http GET \"https://api.scaleway.com/domain/v2beta1/contacts\" \\\n  X-Auth-Token:$SCW_SECRET_KEY"
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "Contacts"
+        ],
+        "operationId": "CreateContact",
+        "summary": "Create contact",
+        "description": "Create a new contact with the provided information.",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_id": {
+                    "type": "string",
+                    "description": "Project ID to create the contact in."
+                  },
+                  "legal_form": {
+                    "description": "Legal form of the contact (individual, corporate, association, other).",
+                    "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact.LegalForm"
+                  },
+                  "firstname": {
+                    "type": "string",
+                    "description": "First name of the contact."
+                  },
+                  "lastname": {
+                    "type": "string",
+                    "description": "Last name of the contact."
+                  },
+                  "company_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Company name of the contact (required for corporate legal forms)."
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email address of the contact."
+                  },
+                  "email_alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternative email address of the contact."
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "description": "Phone number of the contact, normalized to +CC.NationalNumber format."
+                  },
+                  "fax_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Fax number of the contact, normalized to +CC.NationalNumber format."
+                  },
+                  "address_line_1": {
+                    "type": "string",
+                    "description": "First line of the contact's address."
+                  },
+                  "address_line_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second line of the contact's address."
+                  },
+                  "zip": {
+                    "type": "string",
+                    "description": "Postal code of the contact."
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "City of the contact."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "State or region of the contact."
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country code of the contact (ISO 3166-1 alpha-2 format)."
+                  },
+                  "vat_identification_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "VAT identification code of the contact."
+                  },
+                  "company_identification_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Company identification code of the contact (SIRET/SIREN for French contacts, any format for others)."
+                  },
+                  "lang": {
+                    "description": "Preferred language of the contact.",
+                    "$ref": "#/components/schemas/scaleway.std.LanguageCode"
+                  },
+                  "resale": {
+                    "type": "boolean",
+                    "description": "Indicates whether the contact's information can be resold."
+                  },
+                  "whois_opt_in": {
+                    "type": "boolean",
+                    "description": "Indicates whether the contact's information is published in the WHOIS database."
+                  },
+                  "extension_fr": {
+                    "description": "Additional information required for AFNIC-managed TLDs (.fr, .re, .pm, .yt, .wf, .tf).",
+                    "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact.ExtensionFR"
+                  },
+                  "extension_eu": {
+                    "description": "Additional information required for .eu domains. Conditionally required.",
+                    "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact.ExtensionEU"
+                  },
+                  "extension_nl": {
+                    "description": "Additional information required for .nl domains. Auto-populated for individuals.",
+                    "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact.ExtensionNL"
+                  },
+                  "extension_it": {
+                    "description": "Additional information required for .it domains. Contains a PIN.",
+                    "$ref": "#/components/schemas/scaleway.domain.v2beta1.Contact.ExtensionIT"
+                  }
+                },
+                "x-properties-order": [
+                  "project_id",
+                  "legal_form",
+                  "firstname",
+                  "lastname",
+                  "company_name",
+                  "email",
+                  "email_alt",
+                  "phone_number",
+                  "fax_number",
+                  "address_line_1",
+                  "address_line_2",
+                  "zip",
+                  "city",
+                  "state",
+                  "country",
+                  "vat_identification_code",
+                  "company_identification_code",
+                  "lang",
+                  "resale",
+                  "whois_opt_in",
+                  "extension_fr",
+                  "extension_eu",
+                  "extension_nl",
+                  "extension_it"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "scaleway": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "cURL",
+            "source": "curl -X POST \\\n  -H \"X-Auth-Token: $SCW_SECRET_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"address_line_1\": \"string\",\n    \"city\": \"string\",\n    \"country\": \"string\",\n    \"email\": \"string\",\n    \"firstname\": \"string\",\n    \"lastname\": \"string\",\n    \"phone_number\": \"string\",\n    \"project_id\": \"string\",\n    \"resale\": false,\n    \"whois_opt_in\": false,\n    \"zip\": \"string\"\n  }' \\\n  \"https://api.scaleway.com/domain/v2beta1/contacts\""
+          },
+          {
+            "lang": "HTTPie",
+            "source": "http POST \"https://api.scaleway.com/domain/v2beta1/contacts\" \\\n  X-Auth-Token:$SCW_SECRET_KEY \\\n  address_line_1=\"string\" \\\n  city=\"string\" \\\n  country=\"string\" \\\n  email=\"string\" \\\n  firstname=\"string\" \\\n  lastname=\"string\" \\\n  phone_number=\"string\" \\\n  project_id=\"string\" \\\n  resale:=false \\\n  whois_opt_in:=false \\\n  zip=\"string\""
+          }
+        ]
       }
     },
     "/domain/v2beta1/contacts/{contact_id}": {

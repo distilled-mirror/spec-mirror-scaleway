@@ -29,6 +29,15 @@
       "scaleway.registry.v1.Image": {
         "type": "object",
         "properties": {
+          "srn": {
+            "type": "string",
+            "description": "SRN of the image.",
+            "pattern": "^srn://registry\\.[^/]+/regions/[^/]+/images/[^/]+$"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region where the image is located."
+          },
           "id": {
             "type": "string",
             "description": "UUID of the image."
@@ -88,6 +97,8 @@
           }
         },
         "x-properties-order": [
+          "srn",
+          "region",
           "id",
           "name",
           "namespace_id",
@@ -219,6 +230,11 @@
       "scaleway.registry.v1.Namespace": {
         "type": "object",
         "properties": {
+          "srn": {
+            "type": "string",
+            "description": "SRN of the namespace.",
+            "pattern": "^srn://registry\\.[^/]+/regions/[^/]+/namespaces/[^/]+$"
+          },
           "id": {
             "type": "string",
             "description": "UUID of the namespace."
@@ -289,6 +305,7 @@
           }
         },
         "x-properties-order": [
+          "srn",
           "id",
           "name",
           "description",
@@ -319,6 +336,15 @@
       "scaleway.registry.v1.Tag": {
         "type": "object",
         "properties": {
+          "srn": {
+            "type": "string",
+            "description": "SRN of the tag.",
+            "pattern": "^srn://registry\\.[^/]+/regions/[^/]+/tags/[^/]+$"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region where the tag is located."
+          },
           "id": {
             "type": "string",
             "description": "UUID of the tag."
@@ -359,6 +385,8 @@
           }
         },
         "x-properties-order": [
+          "srn",
+          "region",
           "id",
           "name",
           "image_id",
@@ -408,7 +436,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -519,7 +548,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -579,7 +609,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -658,7 +689,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -720,7 +752,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -816,7 +849,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -917,7 +951,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           }
@@ -1021,7 +1056,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -1081,7 +1117,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -1171,7 +1208,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -1233,7 +1271,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
@@ -1293,7 +1332,8 @@
               "enum": [
                 "fr-par",
                 "nl-ams",
-                "pl-waw"
+                "pl-waw",
+                "it-mil"
               ]
             }
           },
